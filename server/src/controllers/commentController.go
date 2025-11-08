@@ -103,4 +103,30 @@ func EditComment(c *gin.Context) {
 	})
 }
 
+// Listar comentários da publicação
+func GetComments(c *gin.Context) {
+	postId := c.Param("id")
+
+	postIdInt, err := strconv.Atoi(postId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Erro ao converter Id."})
+		return
+	}
+
+	var comments []models.Comment
+	if err := config.DB.
+		Preload("User").
+		Where("post_id = ?", postIdInt).
+		Order("created_at desc").
+		Find(&comments).Error; err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar comentários."})
+		return
+	}
+
+		
+	c.JSON(http.StatusOK, comments)
+
+}
+
 

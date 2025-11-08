@@ -8,5 +8,6 @@ type User struct {
 	Email	  string	`gorm:"unique" json:"email"`
 	Password  string	`json:"-"`
 	NameUser  string 	`gorm:"unique" json:"name_user"`
+	Bio		  string	`json:"bio,omitempty"`
 	CreatedAt time.Time	`json:"created_at"`	
 }

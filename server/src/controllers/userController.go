@@ -17,7 +17,8 @@ func EditUserData(c *gin.Context){
 	// Dados de edição
 	var body struct {
 		Name 		string		`json:"name"`
-		NameUser	string		`json:"name_user"`	
+		NameUser	string		`json:"name_user"`
+		Bio 		string		`josn:"bio"`	
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -44,6 +45,7 @@ func EditUserData(c *gin.Context){
 		Updates(models.User{
 			Name: body.Name,
 			NameUser: body.NameUser,
+			Bio: body.Bio,
 		}).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao editar dados."})
 			return

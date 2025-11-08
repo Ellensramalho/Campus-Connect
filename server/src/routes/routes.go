@@ -22,4 +22,5 @@ func SetupRoutes(r *gin.Engine){
 	
 	auth.POST("/post/:id/comments", controllers.CreateComment)
 	auth.PUT("/comment/:id", controllers.EditComment)
+	auth.GET("/post/:id/comments", controllers.GetComments)
 }
