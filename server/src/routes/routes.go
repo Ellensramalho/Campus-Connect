@@ -14,8 +14,12 @@ func SetupRoutes(r *gin.Engine){
 	auth.Use(middlewares.Auth())
 
 	auth.GET("/profile", controllers.Profile)
+	auth.PATCH("/profile", controllers.EditUserData)
+
 	auth.POST("/posts", controllers.CreatePost)
 	auth.GET("/posts", controllers.GetPosts)
-	auth.PATCH("/profile", controllers.EditUserData)
+	auth.PATCH("/post/:id", controllers.EditPost)
+	
 	auth.POST("/post/:id/comments", controllers.CreateComment)
+	auth.PUT("/comment/:id", controllers.EditComment)
 }
