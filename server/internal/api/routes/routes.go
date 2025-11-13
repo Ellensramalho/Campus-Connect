@@ -21,6 +21,7 @@ func SetupRoutes(r *gin.Engine){
 	auth.GET("/feed", controllers.GetPostsUser)
 	auth.PATCH("/post/:id", controllers.EditPost)
 	auth.POST("/post/like", controllers.LikePost)
+	auth.DELETE("/post/:id", controllers.DeletePost)
 	auth.DELETE("/post/unlike", controllers.UnLikePost)
 	
 	auth.POST("/post/:id/comments", controllers.CreateComment)

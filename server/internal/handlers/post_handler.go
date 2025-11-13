@@ -122,8 +122,45 @@ func EditPost(c *gin.Context) {
 
 }
 
+// Excluir postagem
+func DeletePost(c *gin.Context) {
+	postIdStr := c.Param("id")
+
+	var postId uint
+
+	if id, err := strconv.ParseUint(postIdStr, 10, 32); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Id inválido."})
+		return
+	} else {
+		postId = uint(id)
+	}
+
+	if err := config.DB.Where("post_id = ?", postId).Delete(&models.Comment{}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar comentários."})
+		return
+	}
+
+	if err := config.DB.Exec("DELETE FROM post_tags WHERE post_id = ?", postId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar tags associadas."})
+		return
+	}
+
+	result := config.DB.Delete(&models.Post{}, postId)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar postagem."})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Postagem não encontrada."})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Postagem deletada com sucesso."})
+
+}
+
 // Listagem de postagens do usuário
-func GetPostsUser(c *gin.Context){
+func GetPostsUser(c *gin.Context) {
 	userId := c.GetUint("userId")
 
 	var posts []models.Post
