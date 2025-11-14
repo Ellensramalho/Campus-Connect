@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
@@ -74,5 +75,99 @@ func CreateGroup(c *gin.Context) {
 		"group": group,
 		"members": members,
 	})
+}
+
+// Excluir um grupo
+func DeleteGroup(c *gin.Context) {
+	groupIdStr := c.Param("id")
+
+	var groupId uint
+
+	if id, err := strconv.ParseUint(groupIdStr, 10, 32); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Id inválido."})
+		return
+	} else {
+		groupId = uint(id)
+	}
+
+	if err := config.DB.
+		Where("group_id = ?", uint(groupId)).
+		Delete(&models.Member{}).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Erro ao deletar membros.", 
+				"details": err.Error(),
+			})
+			return
+		}
+
+	result := config.DB.
+		Where("id = ?", uint(groupId)).
+		Delete(&models.Group{})
+		
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar grupo.", 
+		})
+		return
+	}
+
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Grupo não encontrado."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Grupo deletado com sucesso."})
 
 }
+
+// Editar grupo
+func EditGroup(c *gin.Context) {
+	groupIdStr := c.Param("id")
+	teacherId := c.GetUint("userId")
+
+	var groupId uint
+
+	if id, err := strconv.ParseUint(groupIdStr, 10, 32); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Erro ao converter id.",
+			"details": err.Error(),
+		})
+		return
+	} else {
+		groupId = uint(id)
+	}
+
+	var body struct {
+		Name 			string    `json:"name"`
+		Description		string	  `json:"description"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Buscando comentário
+	var group models.Group
+	if err := config.DB.First(&group, groupId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Grupo não encontrado."})
+		return
+	}
+
+	if group.TeacherID != uint(teacherId) {
+		c.JSON(http.StatusForbidden, gin.H{"erro": "Acesso negado."})
+		return
+	}
+
+	if err := config.DB.Model(&group).Updates(models.Group{
+		Name: 			body.Name,
+		Description: 	body.Description,
+	}).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar grupo"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Dados de grupo atualizados com sucesso."})
+
+}
+
