@@ -18,7 +18,7 @@ func SetupRoutes(r *gin.Engine){
 
 	auth.POST("/posts", middlewares.AuthorizeRole("admin", "professor"), handlers.CreatePost)
 	auth.GET("/posts", handlers.GetPostsUser)
-	auth.GET("/feed", handlers.GetPostsUser)
+	auth.GET("/feed", handlers.GetPosts)
 	auth.PATCH("/post/:id", handlers.EditPost)
 	auth.POST("/post/like", handlers.LikePost)
 	auth.DELETE("/post/:id", handlers.DeletePost)
