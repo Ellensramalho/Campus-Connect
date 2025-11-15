@@ -33,6 +33,7 @@ func main(){
 		&models.Member{},
 		&models.Teacher{},
 		&models.Student{},
+		&models.PasswordReset{},
 	)
 
 	router := gin.Default()
