@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import * as z from "zod"
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 const sendLinkSchema = z.object({
     email: z.string().email("Insira um E-mail válido.")
@@ -21,8 +22,10 @@ export default function ForgoutPass() {
         resolver: zodResolver(sendLinkSchema)
     })
 
-    const sendSubmit = (data: any) => {
-        console.log(data)
+    const { forgout_pass } = useAuthContext();
+
+    const sendSubmit = async (data: any) => {
+        await forgout_pass(data.email);
     }
 
     return (

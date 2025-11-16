@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useContext, createContext, useState, useEffect } from "react";
-import { login, register, profile } from "@/api/auth";
+import { login, register, profile, forgoutPass } from "@/api/auth";
 import { IUser } from "@/types";
 import { toast } from "sonner";
 
@@ -12,6 +12,8 @@ interface IAuthContextProps {
     token: string
     loadProfile: () => Promise<void>
     user: IUser | null
+    forgout_pass: (email: string) => Promise<any>
+
 }
 
 export const AuthContext = createContext<IAuthContextProps | null>(null);
@@ -83,13 +85,29 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         }
     }
 
+    // Solicitar redefinição de senha
+    const forgout_pass = async (email: string) => {
+        setLoading(true);
+        try{
+            const res = await forgoutPass(email);
+            console.log(res);
+        }
+        catch(err){
+            console.log(err);
+        }
+        finally{
+            setLoading(false);
+        }
+    }
+
     const contextValues: IAuthContextProps = {
         loginFunc,
         loading,
         registerFunc,
         token,
         loadProfile,
-        user
+        user,
+        forgout_pass
     }
 
     return(
