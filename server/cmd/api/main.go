@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	seed "github.com/LucasPaulo001/Campus-Connect/cmd/seeds"
 	"github.com/LucasPaulo001/Campus-Connect/internal/api/routes"
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
@@ -35,6 +36,10 @@ func main(){
 		&models.Student{},
 		&models.PasswordReset{},
 	)
+
+	if os.Getenv("RUN_SEED") == "true" {
+        seed.Run()
+    }
 
 	router := gin.Default()
 

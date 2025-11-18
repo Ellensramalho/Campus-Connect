@@ -1,13 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/LucasPaulo001/Campus-Connect/internal/dto"
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
 	"github.com/gin-gonic/gin"
-	"github.com/LucasPaulo001/Campus-Connect/internal/dto"
 )
 
 // Criação de Postagens
@@ -179,14 +181,30 @@ func GetPostsUser(c *gin.Context) {
 
 //Listagem de postagem do feed
 func GetPosts(c *gin.Context) {
+	limit := 10
+
+	if l := c.Query("limit"); l != "" {
+		fmt.Sscan(l, &limit)
+	}
+
+	cursor := c.Query("cursor")
 
 	var posts []models.Post
 
-	if err := config.DB.
+	query := config.DB.
 		Preload("User").
-		Find(&posts).
-		Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao listar postagens"})
+		Order("created_at DESC").
+		Limit(limit)
+
+	// Cursor pagination
+	if cursor != "" {
+		if t, err := time.Parse(time.RFC3339, cursor);err != nil {
+			query = query.Where("created_at < ?", t)
+		}
+	}
+
+	if err := query.Find(&posts).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao listar postagens."})
 		return
 	}
 
@@ -216,7 +234,7 @@ func GetPosts(c *gin.Context) {
 				liked = err == nil
 		}
 
-		res := dto.PostResponse{
+		response = append(response, dto.PostResponse{
 			ID:      post.ID,
 			Title:   post.Title,
 			Content: post.Content,
@@ -229,12 +247,18 @@ func GetPosts(c *gin.Context) {
 			LikesCount: likesCount,
 			LikedByMe:  liked,
 			CreatedAt:  post.CreatedAt,
-		}
-		
-		response = append(response, res)
+		})
+	}
+	nextCursor := ""
+	if len(posts) > 0 {
+		nextCursor = posts[len(posts)-1].CreatedAt.Format(time.RFC3339)
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{
+		"data": 			response,
+		"next_cursor": 		nextCursor,
+		"has_more": 		len(posts) == limit,
+	})
 
 }
 
