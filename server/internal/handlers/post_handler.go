@@ -7,6 +7,7 @@ import (
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
 	"github.com/gin-gonic/gin"
+	"github.com/LucasPaulo001/Campus-Connect/internal/dto"
 )
 
 // Criação de Postagens
@@ -181,12 +182,59 @@ func GetPosts(c *gin.Context) {
 
 	var posts []models.Post
 
-	if err := config.DB.Preload("User").Find(&posts).Error; err != nil {
+	if err := config.DB.
+		Preload("User").
+		Find(&posts).
+		Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao listar postagens"})
 		return
 	}
 
-	c.JSON(http.StatusOK, posts)
+	userId := c.GetUint("userId")
+
+	var response []dto.PostResponse
+
+	for _, post := range posts {
+		
+		// Contar likes
+		var likesCount int64
+
+		config.DB.
+			Model(&models.LikePost{}).
+			Where("post_id = ?", post.ID).
+			Count(&likesCount)
+
+		// Verificando se o usuário curtiu
+		liked := false
+
+		if userId != 0 {
+			var l models.LikePost
+			err := config.DB.
+				Where("post_id = ? AND user_id = ?", post.ID, userId).
+				First(&l).Error
+
+				liked = err == nil
+		}
+
+		res := dto.PostResponse{
+			ID:      post.ID,
+			Title:   post.Title,
+			Content: post.Content,
+			User: dto.UserInfo{
+				ID:    post.User.ID,
+				Name:  post.User.Name,
+				Email: post.User.Email,
+				Role:  post.User.Role,
+			},
+			LikesCount: likesCount,
+			LikedByMe:  liked,
+			CreatedAt:  post.CreatedAt,
+		}
+		
+		response = append(response, res)
+	}
+
+	c.JSON(http.StatusOK, response)
 
 }
 
