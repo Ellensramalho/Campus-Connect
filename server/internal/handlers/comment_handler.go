@@ -83,7 +83,7 @@ func EditComment(c *gin.Context) {
 		return
 	}
 
-	if comment.ID != userId {
+	if comment.User.ID != userId {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Permissão de edição negada."})
 		return
 	}
