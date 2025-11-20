@@ -126,7 +126,44 @@ func GetComments(c *gin.Context) {
 
 		
 	c.JSON(http.StatusOK, comments)
+}
 
+// Deletar comentário
+func DeleteComment(c *gin.Context) {
+	commentIdStr := c.Param("id");
+
+	id, err := strconv.ParseUint(commentIdStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido."})
+		return
+	}
+	commentId := uint(id)
+
+	// Buscando comentário
+	var comment models.Comment
+	if err := config.DB.First(&comment, commentId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Comentário não encontrado."})
+		return
+	}
+
+	// Verificando se o comentário é do usuário
+	userId := c.GetUint("userId")
+
+	if comment.UserID != userId {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Você não tem permissão para deletar esse comentário."})
+		return
+	}
+
+	if err := config.DB.Delete(&comment).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar comentário", 
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Comentário deletado com sucesso."})
+	
 }
 
 

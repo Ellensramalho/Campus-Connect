@@ -135,28 +135,60 @@ func DeletePost(c *gin.Context) {
 		postId = uint(id)
 	}
 
-	if err := config.DB.Where("post_id = ?", postId).Delete(&models.Comment{}).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar comentários."})
+	// Buscar postagem
+	var post models.Post
+	if err := config.DB.First(&post, postId).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar comentários.", 
+			"details": err.Error(),
+		})
 		return
 	}
 
-	if err := config.DB.Exec("DELETE FROM post_tags WHERE post_id = ?", postId).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar tags associadas."})
+	// Verificar se é o dono da postagem
+	userId := c.GetUint("userId")
+	if post.UserID != userId {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Você não tem permissão para deletar essa postagem"})
 		return
 	}
 
-	result := config.DB.Delete(&models.Post{}, postId)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao deletar postagem."})
+	// Iniciar transação
+	tx := config.DB.Begin()
+
+	// Deletar comentários associados
+	if err := tx.Where("post_id = ?", postId).
+		Delete(&models.Comment{}).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar comentários.",
+			"details": err.Error(),
+		})
 		return
 	}
 
-	if result.RowsAffected == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Postagem não encontrada."})
+	// Deletar tags relacionadas (pivot)
+	if err := tx.Exec("DELETE FROM post_tags WHERE post_id = ?", postId).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar tags associadas.",
+			"details": err.Error(),
+		})
 		return
 	}
+
+	// Deletar o post
+	if err := tx.Delete(&models.Post{}, postId).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao deletar postagem.",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	tx.Commit()
+
 	c.JSON(http.StatusOK, gin.H{"message": "Postagem deletada com sucesso."})
-
 }
 
 // Listagem de postagens do usuário

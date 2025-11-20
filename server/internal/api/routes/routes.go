@@ -30,6 +30,7 @@ func SetupRoutes(r *gin.Engine){
 	auth.GET("/post/:id/comments", handlers.GetComments)
 	auth.POST("/comment/like", handlers.LikeComments)
 	auth.DELETE("/comment/unlike", handlers.UnlikeComment)
+	auth.DELETE("/comment/:id", handlers.DeleteComment)
 
 	auth.POST("/become/teacher", handlers.BecomeTeacher)
 	auth.POST("/group/create", middlewares.AuthorizeRole("professor"), handlers.CreateGroup)
