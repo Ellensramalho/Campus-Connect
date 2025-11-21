@@ -11,21 +11,66 @@ import {
   Settings,
   User,
 } from "lucide-react";
+import { MdUpload } from "react-icons/md";
+
 import { useEffect, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
+  const router = useRouter();
+
+  // Items para o mobile
   const itemsMobile = [
-    { item: "Home", icon: <Home /> },
-    { item: "Explorar", icon: <Compass /> },
-    { item: "Mensagens", icon: <MessageCircle /> },
-    { item: "Editar Perfil", icon: <Edit /> },
-    { item: "Configurações", icon: <Settings /> },
+    {
+      item: "Home",
+      icon: <Home />,
+      onClick: () => router.push("/"),
+    },
+    {
+      item: "Explorar",
+      icon: <Compass />,
+      onClick: () => router.push("/explorer"),
+    },
+    {
+      item: "Mensagens",
+      icon: <MessageCircle />,
+      onClick: () => router.push("/messages"),
+    },
+    {
+      item: "Editar Perfil",
+      icon: <Edit />,
+      onClick: () => router.push("/profile-edit"),
+    },
+    {
+      item: "Configurações",
+      icon: <Settings />,
+      onClick: () => router.push("/settings"),
+    },
+     {
+      item: "Minhas postagens",
+      icon: <MdUpload />,
+      onClick: () => router.push("my-posts"),
+    }
   ];
 
+  // Items para o desktop
   const itemsDesktop = [
-    { item: "Editar Perfil", icon: <Edit /> },
-    { item: "Configurações", icon: <Settings /> },
+    {
+      item: "Editar Perfil",
+      icon: <Edit />,
+      onClick: () => router.push("/profile-edit"),
+    },
+    {
+      item: "Configurações",
+      icon: <Settings />,
+      onClick: () => router.push("/settings"),
+    },
+    {
+      item: "Minhas postagens",
+      icon: <MdUpload />,
+      onClick: () => router.push("my-posts"),
+    },
   ];
 
   const [shrunk, setShrunk] = useState(false);
@@ -71,7 +116,9 @@ export const Navbar = () => {
         <div>
           <Link href={"/"}>
             <h1 className="text-[20px] flex items-center gap-3 justify-center font-bold md:text-2xl">
-              <span>Campus <span className="text-blue-700">Connect</span></span>
+              <span>
+                Campus <span className="text-blue-700">Connect</span>
+              </span>
               <AiOutlinePartition />
             </h1>
           </Link>
@@ -108,7 +155,11 @@ export const Navbar = () => {
             </Link>
           </li>
           <li className="flex px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col items-center justify-center">
-            <ProfileMenu shrunk={shrunk} iconProfile="Perfil" items={itemsDesktop} />
+            <ProfileMenu
+              shrunk={shrunk}
+              iconProfile="Perfil"
+              items={itemsDesktop}
+            />
           </li>
         </ul>
       </nav>

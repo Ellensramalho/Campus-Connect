@@ -61,9 +61,9 @@ export const PostCard = ({
     <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-4 space-y-4">
       <div className="flex justify-between items-center">
         <span className="font-bold">
-          {author.name} - {author.role} - {date}
+          {author?.name || author?.name_user} - {author?.role} - {date}
         </span>
-        {user?.id === author.id && (
+        {user?.id === author?.id && (
           <span>
             <CommentTools isPost={true} ID={postId} content={content} titlePost={title} tagsPost={tagsPost} />
           </span>
@@ -97,8 +97,8 @@ export const PostCard = ({
       </div>
       <hr />
       <div>
-        {tagsPost && tagsPost.map((t) => (
-          <span>{t}</span>
+        {tagsPost && tagsPost.map((t, index) => (
+          <span key={`${t}-${index}`}>{t}</span>
         ))}
       </div>
     </div>

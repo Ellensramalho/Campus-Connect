@@ -24,6 +24,18 @@ export interface IPost {
   tags: string[]
 }
 
+export interface IMyPost {
+  ID: number;
+  title: string;
+  content: string;
+  created_at: string;
+  User: IUser;
+  likes_count: number;
+  Likes: Like[];
+  liked_by_me: boolean;
+  tags: string[]
+}
+
 export interface IComment {
   ID: number;
   User: IUser;

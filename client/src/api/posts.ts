@@ -38,6 +38,19 @@ export const loadPosts = async (token: string) => {
   return res.data;
 };
 
+// Listar postagens do usuário
+export const LoadMyPosts = async (token: string) => {
+  const res = await axiosInstace.get("/api/posts", 
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
 // Dar Like nos posts
 export const likePosts = async (
   user_id: number | undefined,
@@ -129,3 +142,15 @@ export const editComment = async (
   return res.data;
 };
 
+// Deletar comentário
+export const deleteComment = async (comment_id: number | undefined, token: string) => {
+  const res = await axiosInstace.delete(`/api/comment/${comment_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+
+  return res.data
+}

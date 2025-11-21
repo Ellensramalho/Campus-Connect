@@ -10,25 +10,39 @@ import {
 } from "@/components/ui/sheet";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BiExit } from "react-icons/bi";
+import { Spinner } from "../ui/spinner";
 
 type listItems = {
   item: string;
   icon: React.ReactNode;
+  onClick?: () => void
 };
 
 interface IProfileMenuProps {
   items: listItems[];
   iconProfile?: React.ReactNode | string;
-  shrunk?: boolean
+  shrunk?: boolean;
 }
 
 export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
-  const { logout, user } = useAuthContext();
+  const { logout, user, loading } = useAuthContext();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const handleRedirect = async (item: listItems) => {
+    if(item.onClick){
+      item.onClick();
+    }
+
+    setIsOpen(false)
+  }
 
   return (
-    <Sheet>
+    <Sheet
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <SheetTrigger asChild>
         <div className="cursor-pointer w-[100px] flex flex-col items-center justify-center">
           <User className="hidden md:flex" />
@@ -39,9 +53,22 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
         <SheetHeader>
           <SheetTitle>Meu perfil</SheetTitle>
           <div className="flex flex-col mt-2 gap-1">
-            <span className="font-semibold">{user?.name}</span>
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
-            <span className="text-sm text-muted-foreground">{user?.role}</span>
+            {loading ? (
+              <span>
+                <Spinner />
+                Aguarde...
+              </span>
+            ) : (
+              <>
+                <span className="font-semibold">{user?.name}</span>
+                <span className="text-sm text-muted-foreground">
+                  {user?.email}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  {user?.role}
+                </span>
+              </>
+            )}
           </div>
         </SheetHeader>
         <hr />
@@ -51,6 +78,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
               <Button
                 className="justify-start cursor-pointer"
                 variant={"ghost"}
+                onClick={() => handleRedirect(item)}
               >
                 {item.icon} {item.item}
               </Button>

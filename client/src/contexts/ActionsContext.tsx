@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 
-import { loadPosts, likePosts, loadComments, removeLikePost } from "@/api/posts";
-import { IComment, IPost } from "@/types";
+import { loadPosts, likePosts, loadComments, removeLikePost, LoadMyPosts } from "@/api/posts";
+import { IComment, IMyPost, IPost } from "@/types";
 
 interface IActionsContext {
     listPosts: (token: string) => Promise<any> 
@@ -11,6 +11,8 @@ interface IActionsContext {
     listComments: (post_id: number | undefined, token: string) => Promise<IComment[] | null>
     unlikePost: (user_id: number | undefined, post_id: number, token: string) => Promise<void>
     comment: IComment[] | null
+    listMyPosts: (token: string) => Promise<any>
+    myPosts: IMyPost[] | null
 }
 
 export const ActionContext = createContext<IActionsContext | null>(null);
@@ -18,6 +20,7 @@ export const ActionContext = createContext<IActionsContext | null>(null);
 export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     const [loadingAction, setLoadingAction] = useState<boolean>(false);
     const [posts, setPosts] = useState<IPost[] | null>(null);
+    const [myPosts, setMyPosts] = useState<IMyPost[] | null>(null);
     const [comment, setComments] = React.useState<IComment[] | null>(null);
 
 
@@ -34,6 +37,22 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
         }
         finally{
           setLoadingAction(false);  
+        }
+    }
+
+    // Listar postagens do usuário
+    const listMyPosts = async (token: string) => {
+        setLoadingAction(true);
+        try{
+            const data = await LoadMyPosts(token);
+            console.log(data)
+            setMyPosts(data);
+        }
+        catch(err: any){
+            console.log(err);
+        }
+        finally{
+            setLoadingAction(false);
         }
     }
 
@@ -99,6 +118,8 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
 
     const contextValues = {
         listPosts,
+        listMyPosts,
+        myPosts,
         loadingAction,
         posts,
         likeInPost,

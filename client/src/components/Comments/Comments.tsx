@@ -94,8 +94,8 @@ export function Comments({ post_id }: ICommentsProps) {
                 </p>
               )}
 
-              {comment?.map((c, i) => (
-                <div key={i} className="p-3 rounded-lg bg-secondary">
+              {comment?.map((c, index) => (
+                <div key={`${c.ID}-${index}`} className="p-3 rounded-lg bg-secondary">
                   <span className="flex justify-between">
                     <p className="text-sm font-semibold">
                       {c.User.name} - {convertDate(c.created_at)}
