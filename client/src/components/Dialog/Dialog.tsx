@@ -9,24 +9,26 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "../ui/textarea";
 import { DialogTitle } from "@radix-ui/react-dialog";
-import React, { useState } from "react";
-import { addPost, editComment } from "@/api/posts";
+import React, { useEffect, useState } from "react";
+import { addPost, editComment, editPost } from "@/api/posts";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 import { Input } from "../ui/input";
+import { DialogType, ITag } from "@/types";
+import Image from "next/image";
 
 interface IDialogsProps {
   content?: string | undefined;
-  titlePost?: string | undefined; //Para edição
-  tagsPost?: string[];
+  titlePost?: string; //Para edição
+  tagsPost?: ITag[] | undefined;
   ID?: number | undefined;
   post_id?: number | undefined;
   botton: { value: string; icon: React.ReactNode | string };
   title: string;
   label: string;
-  isPost: boolean;
+  type?: DialogType;
 }
 
 export function Dialogs({
@@ -36,16 +38,39 @@ export function Dialogs({
   botton,
   label,
   title,
-  isPost,
-  titlePost
+  type,
+  titlePost,
+  tagsPost,
 }: IDialogsProps) {
   const [value, setValue] = useState<string | undefined>(content);
   const [titlePostagem, setTitlePost] = useState<string>("");
-  const [tags, setTags] = useState<string>("");
+  const [tags, setTags] = useState<string>(
+    tagsPost ? tagsPost.map((t) => t.Name).join(", ") : ""
+  );
   const [loadingEdit, setLoadingEdit] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const { token } = useAuthContext();
   const { listComments, listPosts } = useActionContext();
+
+
+  useEffect(() => {
+    if (open && tagsPost) {
+      setTags(tagsPost.map(t => t.Name).join(", "));
+      console.log(ID);
+    }
+  }, [open, tagsPost]);
+
+  useEffect(() => {
+    // Sempre que "postTitle" mudar, atualiza o input
+    if (type === "editPost") {
+      setTitlePost(titlePost || "");
+    } else {
+      setTitlePost(""); // se for criar, limpa
+    }
+  }, [type, titlePost]);
+
+
+  // Funções de ação
 
   // Editar comentário
   const handleEdit = async () => {
@@ -63,18 +88,17 @@ export function Dialogs({
   // Fazer postagens
   const handlePost = async () => {
     setLoadingEdit(true);
-    if (!titlePostagem.trim() || !value?.trim()){
+    if (!titlePostagem.trim() || !value?.trim()) {
       toast.error("Informe todos os campos obrigatórios. (*)");
       setLoadingEdit(false);
       return;
     }
     try {
-
       // Formatando tags
       const tagsToArr = tags
         .split(",")
-        .map(t => t.trim())
-        .filter(tag => tag.length > 0);
+        .map((t) => t.trim().toLocaleLowerCase())
+        .filter((tag) => tag.length > 0);
 
       await addPost(titlePostagem, value, token, tagsToArr);
       toast.success("Postagem feita com sucesso!");
@@ -84,10 +108,38 @@ export function Dialogs({
       setTitlePost("");
       setValue("");
       setTags("");
-    
     } finally {
       setLoadingEdit(false);
-      setOpen(false)
+      setOpen(false);
+    }
+  };
+
+  // Editar postagem
+  const handleEditPost = async () => {
+    setLoadingEdit(true);
+    try {
+      if (!titlePostagem.trim() || !value?.trim()) {
+        toast.error("Informe todos os campos obrigatórios. (*)");
+        setLoadingEdit(false);
+        return;
+      }
+      // Formatando tags
+      const tagsToArr = tags
+        .split(",")
+        .map((t) => t.trim().toLocaleLowerCase())
+        .filter((tag) => tag.length > 0);
+
+      await editPost(ID, titlePostagem, value, token, tagsToArr);
+      toast.success("Postagem editada com sucesso!");
+
+      await listPosts(token);
+
+      setTitlePost("");
+      setValue("");
+      setTags("");
+    } finally {
+      setLoadingEdit(false);
+      setOpen(false);
     }
   };
 
@@ -105,42 +157,96 @@ export function Dialogs({
             </span>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] z-[150]">
           <DialogTitle>{title}</DialogTitle>
           <DialogHeader></DialogHeader>
           <div className="grid gap-4">
-            {/* Se for aberto para postagem insere titulo */}
-            {isPost && (
+
+            {/* Imagem */}
+            {
+              type === "createPost" && (
+                <div className="flex justify-center">
+                  <Image 
+                    src={"/newPost.jpg"}
+                    alt="Imagem de postagem"
+                    width={100}
+                    height={100}
+                    className="rounded-xl transform hover:scale-110 transition-all"
+                  />
+                </div>
+              )
+            }
+            {
+              type === "createGroup" && (
+                <div className="flex justify-center">
+                  <Image 
+                    src={"/turmas.svg"}
+                    alt="Imagem de turma"
+                    width={100}
+                    height={100}
+                    className="rounded-xl transform hover:scale-110 transition-all"
+                  />
+                </div>
+              )
+            }
+
+            {/* Se for aberto para postagem ou edição de postagem insere titulo */}
+            {(type === "createPost" || type === "editPost" || type === "createGroup") && (
               <div className="grid gap-3">
                 <Label htmlFor="title">Título*</Label>
                 <Input
-                  placeholder="Título do post"
-                  value={titlePost}
+                  placeholder={type === "createGroup" ? "Nome da turma" : "Título do post"}
+                  value={titlePostagem}
                   onChange={(e) => setTitlePost(e.target.value)}
                 />
               </div>
             )}
             <div className="grid gap-3">
-              <Label htmlFor="content">{label}{isPost && "*"}</Label>
+              <Label htmlFor="content">
+                {label}
+                {(type === "createPost" || type === "editPost" || type === "createGroup") && "*"}
+              </Label>
               <Textarea
-                placeholder="Novo conteúdo..."
+                placeholder={type === "createGroup" ? "Descrição da turma" : "Novo conteúdo..."}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
               />
             </div>
             {/* Se for aberto para postagem insere as tags */}
-            {isPost && (
+            {(type === "createPost" || type === "editPost") && (
               <div className="grid gap-3">
-                <Label htmlFor="tags">Tags <span className="italic">(separadas por vírgula)</span></Label>
+                <Label htmlFor="tags">
+                  Tags <span className="italic">(separadas por vírgula)</span>
+                </Label>
                 <Input
                   placeholder="Tags"
+                  value={tags}
                   onChange={(e) => setTags(e.target.value)}
                 />
               </div>
             )}
           </div>
           <DialogFooter>
-            {isPost ? (
+            {
+              type === "editPost" && (
+                <Button
+                  className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+                  type="submit"
+                  onClick={() => handleEditPost()}
+                  disabled={loadingEdit}
+                >
+                  {loadingEdit ? (
+                    <span className="flex justify-center items-center gap-1.5">
+                      <Spinner />
+                      <span>Editando</span>
+                    </span>
+                  ) : (
+                    <span>Editar</span>
+                  )}
+                </Button>
+              )
+            }
+            {type === "createPost" && (
               <Button
                 className="cursor-pointer bg-blue-600 hover:bg-blue-700"
                 type="submit"
@@ -156,7 +262,27 @@ export function Dialogs({
                   <span>Postar</span>
                 )}
               </Button>
-            ) : (
+            )}
+
+            {type == "createGroup" && (
+              <Button
+                className="cursor-pointer bg-blue-600 hover:bg-blue-700"
+                type="submit"
+                onClick={() => alert("criando grupo")}
+                disabled={loadingEdit}
+              >
+                {loadingEdit ? (
+                  <span className="flex justify-center items-center gap-1.5">
+                    <Spinner />
+                    <span>Criando</span>
+                  </span>
+                ) : (
+                  <span>Criar</span>
+                )}
+              </Button>
+            )}
+
+            {type === "editComment" && (
               <Button
                 className="cursor-pointer bg-blue-600 hover:bg-blue-700"
                 type="submit"
@@ -166,10 +292,10 @@ export function Dialogs({
                 {loadingEdit ? (
                   <span className="flex justify-center items-center gap-1.5">
                     <Spinner />
-                    <span>Salvando</span>
+                    <span>Editando</span>
                   </span>
                 ) : (
-                  <span>Salvar alterações</span>
+                  <span>Salvar</span>
                 )}
               </Button>
             )}

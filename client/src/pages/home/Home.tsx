@@ -27,7 +27,7 @@ export const HomePage = () => {
         {loadingAction ? (
           <LoadingPage />
         ) : (
-          posts?.map((post) => (
+          Array.isArray(posts) && posts?.map((post) => (
             <PostCard
               key={post.id}
               title={post.title}
@@ -38,6 +38,7 @@ export const HomePage = () => {
               postId={post.id}
               tagsPost={post.tags}
               liked_by_me={post.liked_by_me}
+              
             />
           ))
         )}

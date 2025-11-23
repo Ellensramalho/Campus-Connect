@@ -27,6 +27,20 @@ export const deletePost = async (post_id: number | undefined, token: string) => 
   return res.data;
 }
 
+// Editar postagens 
+export const editPost = async (post_id: number | undefined, title: string, content: string | undefined, token: string, tags?: string[]) => {
+  const res = await axiosInstace.patch(`/api/post/${post_id}`, 
+    { title, content, tags },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
 // Listar postagens no feed
 export const loadPosts = async (token: string) => {
   const res = await axiosInstace.get("/api/feed", {

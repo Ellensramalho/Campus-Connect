@@ -49,7 +49,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
           {!shrunk && <span className="text-xs mt-1">{iconProfile}</span>}
         </div>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent className="z-[150]">
         <SheetHeader>
           <SheetTitle>Meu perfil</SheetTitle>
           <div className="flex flex-col mt-2 gap-1">
@@ -60,7 +60,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
               </span>
             ) : (
               <>
-                <span className="font-semibold">{user?.name}</span>
+                <span className="font-semibold">{user?.name_user}</span>
                 <span className="text-sm text-muted-foreground">
                   {user?.email}
                 </span>

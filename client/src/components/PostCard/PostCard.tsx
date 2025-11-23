@@ -1,6 +1,6 @@
 "use clinet";
 
-import { IUser } from "@/types";
+import { ITag, IUser } from "@/types";
 import { useEffect, useState } from "react";
 import { BiLike, BiSolidLike } from "react-icons/bi";
 import { Button } from "../ui/button";
@@ -8,8 +8,7 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Comments } from "../Comments/Comments";
 import { convertDate } from "@/services/formateDate";
-import { MoreHorizontalIcon } from "lucide-react";
-import { CommentTools } from "../CommentTools/CommentTools";
+import { PostTools } from "../PostTools/PostTools";
 
 interface IPostCardProps {
   title: string;
@@ -19,9 +18,10 @@ interface IPostCardProps {
   author: IUser;
   postId: number;
   liked_by_me: boolean;
-  tagsPost: string[]
+  tagsPost: ITag[];
 }
 
+// Componente que renderiza uma postagem
 export const PostCard = ({
   title,
   content,
@@ -30,7 +30,7 @@ export const PostCard = ({
   postId,
   likes_count,
   liked_by_me,
-  tagsPost
+  tagsPost,
 }: IPostCardProps) => {
   const [like, setLike] = useState(liked_by_me);
   const [likeCounts, setLikeCounts] = useState(likes_count);
@@ -60,12 +60,18 @@ export const PostCard = ({
   return (
     <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-4 space-y-4">
       <div className="flex justify-between items-center">
-        <span className="font-bold">
-          {author?.name || author?.name_user} - {author?.role} - {date}
+        <span className="font-bold text-[15px] md:text-2xl">
+          {author.name} - {author.role} - {date}
         </span>
         {user?.id === author?.id && (
           <span>
-            <CommentTools isPost={true} ID={postId} content={content} titlePost={title} tagsPost={tagsPost} />
+            <PostTools
+              type="editPost" //Tipo de ação que será feita ao abrir as ferramentas (editar post)
+              ID={postId}
+              content={content}
+              titlePost={title}
+              tagsPost={tagsPost}
+            />
           </span>
         )}
       </div>
@@ -97,9 +103,12 @@ export const PostCard = ({
       </div>
       <hr />
       <div>
-        {tagsPost && tagsPost.map((t, index) => (
-          <span key={`${t}-${index}`}>{t}</span>
-        ))}
+        {tagsPost &&
+          tagsPost.map((t) => (
+            <span key={t.ID} className="mr-2 px-2 py-1 bg-gray-200 rounded">
+              {t.Name}
+            </span>
+          ))}
       </div>
     </div>
   );

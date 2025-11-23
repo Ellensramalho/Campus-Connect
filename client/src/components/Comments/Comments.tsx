@@ -21,7 +21,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { Spinner } from "../ui/spinner";
 import { createComents } from "@/api/posts";
 import { convertDate } from "@/services/formateDate";
-import { CommentTools } from "../CommentTools/CommentTools";
+import { PostTools } from "../PostTools/PostTools";
 
 interface ICommentsProps {
   post_id: number;
@@ -100,7 +100,7 @@ export function Comments({ post_id }: ICommentsProps) {
                     <p className="text-sm font-semibold">
                       {c.User.name} - {convertDate(c.created_at)}
                     </p>
-                    {c.User.id === user?.id && <CommentTools ID={c.ID} isPost={false} content={c.content} post_id={post_id} />}
+                    {c.User.id === user?.id && <PostTools ID={c.ID} type="editComment" content={c.content} post_id={post_id} />}
                   </span>
                   <p className="text-sm">{c.content}</p>
                 </div>
@@ -130,7 +130,7 @@ export function Comments({ post_id }: ICommentsProps) {
                 <FiSend className="size-5" />
               )
             }
-            
+
           </Button>
         </div>
       </DrawerContent>

@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { LoadingPage } from "@/components/Loading/LoadingPage";
 import { Navbar } from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import DraggableFab from "@/components/DraggableFab/DraggableFab";
 
 export default function PrivateLayout({
   children,
@@ -29,6 +30,7 @@ export default function PrivateLayout({
       <Navbar />
       <div className="mt-10 pt-[var(--header-height)]">
         {children}
+        <DraggableFab />
       </div>
       <Footer />
     </>

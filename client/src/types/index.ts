@@ -12,6 +12,13 @@ interface Like {
   PostId: number;
 }
 
+export interface ITag {
+  ID: number,
+  Name: string
+}
+
+export type DialogType = "createPost" | "editPost" | "createComment" | "editComment" | "createGroup";
+
 export interface IPost {
   id: number;
   title: string;
@@ -21,19 +28,7 @@ export interface IPost {
   likes_count: number;
   Likes: Like[];
   liked_by_me: boolean;
-  tags: string[]
-}
-
-export interface IMyPost {
-  ID: number;
-  title: string;
-  content: string;
-  created_at: string;
-  User: IUser;
-  likes_count: number;
-  Likes: Like[];
-  liked_by_me: boolean;
-  tags: string[]
+  tags: ITag[]
 }
 
 export interface IComment {

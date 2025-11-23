@@ -17,14 +17,15 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { toast } from "sonner";
 import { ConfirmToast } from "../ConfirmToast/ConfirmToast";
 import { useState } from "react";
+import { DialogType, ITag } from "@/types";
 
 interface ICommentToolsProps {
   ID: number;
   content?: string;
   post_id?: number | undefined;
-  isPost: boolean;
   titlePost?: string; // Para editar
-  tagsPost?: string[];
+  tagsPost?: ITag[] | undefined;
+  type?: DialogType;
 }
 
 const title = {
@@ -32,13 +33,13 @@ const title = {
   icon: <BiPencil />,
 };
 
-export function CommentTools({
+export function PostTools({
   ID,
   content,
   post_id,
-  isPost,
   titlePost,
   tagsPost,
+  type,
 }: ICommentToolsProps) {
   const { token } = useAuthContext();
   const { listPosts, listComments, listMyPosts } = useActionContext();
@@ -47,13 +48,13 @@ export function CommentTools({
   // Deletar postagem caso seja isPost
   const handleDeletePost = async () => {
     setLoading(true);
-    try{
+    try {
       await deletePost(ID, token);
       await listPosts(token);
       await listMyPosts(token);
       toast.success("Postagem deletada com sucesso");
     }
-    finally{
+    finally {
       setLoading(false);
     }
 
@@ -82,9 +83,9 @@ export function CommentTools({
         <DropdownMenuContent className="w-40" align="end">
           <DropdownMenuGroup>
             {/* Se for aberto por uma postagem */}
-            {isPost ? (
+            {type === "editPost" && (
               <>
-              {/* Botão de confirmação para deletar */}
+                {/* Botão de confirmação para deletar */}
                 <ConfirmToast
                   text="Excluir"
                   icon={<BiTrash />}
@@ -100,16 +101,20 @@ export function CommentTools({
                   <Dialogs
                     tagsPost={tagsPost}
                     titlePost={titlePost}
-                    isPost={true}
+                    type="editPost"
                     title="Edição de Postagem"
                     label="Conteúdo"
                     botton={title}
                     content={content}
                     ID={ID}
+
                   />
                 </div>
               </>
-            ) : (
+            )}
+
+            {/* Se for aberto por um comentário */}
+            {type === "editComment" && (
               <>
                 <Button
                   variant={"ghost"}
@@ -121,13 +126,14 @@ export function CommentTools({
                 </Button>
                 <div className="cursor-pointer">
                   <Dialogs
-                    isPost={false}
+                    type="editComment"
                     title="Edição de comentário"
                     label="Comentário"
                     botton={title}
                     content={content}
                     ID={ID}
                     post_id={post_id}
+                    tagsPost={tagsPost}
                   />
                 </div>
               </>

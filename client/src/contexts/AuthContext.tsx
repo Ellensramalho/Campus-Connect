@@ -19,7 +19,7 @@ interface IAuthContextProps {
 
 export const AuthContext = createContext<IAuthContextProps | null>(null);
 
-export const AuthProvider = ({children}: {children: React.ReactNode}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<IUser | null>(null);
     const [token, setToken] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(false);
@@ -29,9 +29,9 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         if (token) {
             setToken(token);
         }
-    },[]);
+    }, []);
 
-     useEffect(() => {
+    useEffect(() => {
         if (token) {
             loadProfile();
         }
@@ -39,35 +39,35 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 
     // Login
     const loginFunc = async (email: string, password: string) => {
-        try{
+        try {
             setLoading(true);
             const res = await login(email, password)
-            
+
             localStorage.setItem("token", res.token);
             console.log(res.token);
             setToken(res.token);
 
         }
-        catch(err: any){
+        catch (err: any) {
             console.log(err);
             toast.warning(err.response.data.error)
         }
-        finally{
+        finally {
             setLoading(false);
         }
     }
 
     // Registro
     const registerFunc = async (data: any) => {
-        try{
+        try {
             setLoading(true);
             const res = await register(data);
             toast.success(res.message);
         }
-        catch(err: any){
+        catch (err: any) {
             toast.warning(err.response.data.error)
         }
-        finally{
+        finally {
             setLoading(false);
         }
     }
@@ -76,12 +76,12 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     const loadProfile = async () => {
 
 
-        try{
+        try {
             const res = await profile(token);
             setUser(res);
             console.log(res);
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     }
@@ -89,14 +89,14 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     // Solicitar redefinição de senha
     const forgout_pass = async (email: string) => {
         setLoading(true);
-        try{
+        try {
             const res = await forgoutPass(email);
             toast.success(res.message)
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
-        finally{
+        finally {
             setLoading(false);
         }
     }
@@ -119,18 +119,18 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         logout
     }
 
-    return(
-        <AuthContext.Provider value={contextValues}> 
+    return (
+        <AuthContext.Provider value={contextValues}>
             {children}
         </AuthContext.Provider>
-    ) 
+    )
 }
 
 export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (context === null) {
-    throw new Error("useListContext deve ser usado dentro de um ListProvider");
-  }
-  return context;
+    const context = useContext(AuthContext);
+    if (context === null) {
+        throw new Error("useListContext deve ser usado dentro de um ListProvider");
+    }
+    return context;
 };
 
