@@ -11,6 +11,8 @@ import { convertDate } from "@/services/formateDate";
 import { PostTools } from "../PostTools/PostTools";
 import { FaRegBookmark } from "react-icons/fa";
 import { User2Icon } from "lucide-react";
+import { SavePosts } from "@/api/posts";
+import { toast } from "sonner";
 
 
 interface IPostCardProps {
@@ -53,6 +55,13 @@ export const PostCard = ({
     }
   };
 
+  // Salvar postagens
+  const handleSavePost = async () => {
+    const data = await SavePosts(postId, token);
+    console.log(data);
+    toast.success(`${data.message}`);
+  }
+
   // Formatando data
   const date = convertDate(created_at);
 
@@ -63,7 +72,7 @@ export const PostCard = ({
   return (
     <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
-        <span className="font-bold text-[15px] flex items-center md:p-4 gap-10 justify-between md:gap-5 md:text-2xl">
+        <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
           <User2Icon className="size-8" />
           <div>
             {author.name}
@@ -109,7 +118,11 @@ export const PostCard = ({
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />
         </Button>
-        <Button variant={"ghost"} className="cursor-pointer">
+        <Button 
+          variant={"ghost"} 
+          className="cursor-pointer"
+          onClick={() => handleSavePost()}
+        >
           <FaRegBookmark />
         </Button>
       </div>

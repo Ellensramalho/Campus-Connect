@@ -1,16 +1,84 @@
 "use client";
 
+import { loadResponses } from "@/api/posts";
+import { PostTools } from "@/components/PostTools/PostTools";
+import { Spinner } from "@/components/ui/spinner";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { convertDate } from "@/services/formateDate";
+import { IResponsesComment } from "@/types";
+import { User2, User2Icon } from "lucide-react";
+import { useEffect, useState } from "react";
+
 interface IResponsesProp {
   comment_id: number;
   openResps: number | null;
+  loadReps: boolean;
 }
 
-export const Responses = ({ comment_id, openResps }: IResponsesProp) => {
+export const Responses = ({
+  comment_id,
+  openResps,
+  loadReps,
+}: IResponsesProp) => {
+  const [responses, setResponses] = useState<IResponsesComment[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { token, user } = useAuthContext();
+
+  // Listar respostas
+  const handleListResponses = async () => {
+    setLoading(true);
+    try {
+      const data = await loadResponses(comment_id, token);
+      setResponses(data.data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!openResps) return;
+    handleListResponses();
+  }, [loadReps]);
+
   return (
-    openResps === comment_id && (
-        <div className="h-50">
-            {comment_id}
-        </div>
-    )
-  )
+    <div className="flex flex-col gap-3.5">
+      {loading ? (
+        <span className="h-full w-full gap-1.5 flex justify-center items-center">
+          <Spinner className="size-6 text-blue-600" />
+          Carregando
+        </span>
+      ) : (
+        Array.isArray(responses) &&
+        responses.length === 0 ? (
+          <span className="flex justify-center items-center">Nenhuma resposta...</span>
+        ) : (
+          responses?.map((resp) => (
+          <div key={resp.ID} className="p-3 rounded-lg bg-blue-100 ml-1.5">
+            <span className="flex justify-between">
+              <div className="flex py-3 items-center gap-2">
+                <User2Icon className="size-6 md:size-8" />
+                <div className="text-sm flex flex-col font-semibold">
+                  <span>{resp.User.name}</span>
+                  <span className="font-light">
+                    {convertDate(resp.created_at)}
+                  </span>
+                </div>
+              </div>
+              {resp.User.id === user?.id && (
+                <PostTools
+                  ID={resp.ID}
+                  type="editResponse"
+                  content={resp.content}
+                  commentId={comment_id}
+                />
+              )}
+            </span>
+            <p className="text-sm">{resp.content}</p>
+          </div>
+        ))
+      )
+      )}
+    </div>
+  );
 };

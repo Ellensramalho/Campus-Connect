@@ -65,6 +65,20 @@ export const LoadMyPosts = async (token: string) => {
   return res.data;
 }
 
+// Salvar postagem
+export const SavePosts = async (post_id: number, token: string) => {
+  const res = await axiosInstace.post(`/api/post/${post_id}/save`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
 // Dar Like nos posts
 export const likePosts = async (
   user_id: number | undefined,
@@ -182,3 +196,45 @@ export const likeComment = async (user_id: number | undefined, comment_id: numbe
 
   return res.data.data;
 };
+
+// Listar respostas de comentários
+export const loadResponses = async (comment_id: number | undefined, token: string) => {
+  const res = await axiosInstace.get(`/api/comment/${comment_id}/response`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
+// Deletar respostas de comentário
+export const deleteResponse = async (response_id: number, token: string) => {
+  const res = await axiosInstace.delete(`/api/response/${response_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
+// Responder Comentário
+export const responseComment = async (comment_id: number | undefined, content: string, token: string) => {
+  const res = await axiosInstace.post(`/api/comment/${comment_id}/response`,
+    {
+      content
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}

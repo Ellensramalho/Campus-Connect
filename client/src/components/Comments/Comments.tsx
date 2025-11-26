@@ -39,6 +39,7 @@ export function Comments({ post_id }: ICommentsProps) {
 
   const [openSendId, setOpenSendId] = useState<number | null>(null);
   const [openRespId, setOpenRespId] = useState<number | null>(null);
+  const [loadResps, setLoadResp] = useState<boolean>(false);
 
   const { listComments, comment } = useActionContext();
   const { token } = useAuthContext();
@@ -121,22 +122,22 @@ export function Comments({ post_id }: ICommentsProps) {
 
               {comment?.map((c, index) => (
                 <div
-                  key={`${c.ID}-${index}`}
+                  key={`${c.id}-${index}`}
                   className="p-3 rounded-lg bg-secondary"
                 >
                   <span className="flex justify-between">
                     <div className="flex py-3 items-center gap-2">
                       <User2Icon className="size-6 md:size-8" />
                       <div className="text-sm flex flex-col font-semibold">
-                        <span>{c.User.name}</span>
+                        <span>{c.user.name}</span>
                         <span className="font-light">
                           {convertDate(c.created_at)}
                         </span>
                       </div>
                     </div>
-                    {c.User.id === user?.id && (
+                    {c.user.id === user?.id && (
                       <PostTools
-                        ID={c.ID}
+                        ID={c.id}
                         type="editComment"
                         content={c.content}
                         post_id={post_id}
@@ -151,16 +152,16 @@ export function Comments({ post_id }: ICommentsProps) {
                       <Button
                         variant={"ghost"}
                         className="cursor-pointer"
-                        onClick={() => handleLike(c.ID)}
+                        onClick={() => handleLike(c.id)}
                       >
                         <BiLike className="size-6" />
                       </Button>
                       <Button
                         variant={"ghost"}
                         className="cursor-pointer"
-                        onClick={() => handleOpenSend(c.ID)}
+                        onClick={() => handleOpenSend(c.id)}
                       >
-                        {openSendId === c.ID ? (
+                        {openSendId === c.id ? (
                           <span>Cancelar</span>
                         ) : (
                           <span>Responder</span>
@@ -169,10 +170,9 @@ export function Comments({ post_id }: ICommentsProps) {
                     </div>
 
                     {/* Input para responder comentário */}
-                    {openSendId === c.ID && (
+                    {openSendId === c.id && (
                       <FormResponse
                         openSend={openSendId}
-                        setOpenSend={setOpenSendId}
                         comment={c}
                       />
                     )}
@@ -183,18 +183,26 @@ export function Comments({ post_id }: ICommentsProps) {
                   <Button
                     variant={"ghost"}
                     className="px-4 mt-3 flex cursor-pointer hover:bg-blue-500 hover:text-white"
-                    onClick={() => handleOpenResps(c.ID)}
+                    onClick={() => { 
+                      handleOpenResps(c.id);
+                      setLoadResp((prev) => !prev)
+                    }}
                   >
                     <span className="flex items-center gap-2">
                       Respostas
-                      {openRespId === c.ID ? (
+                      {openRespId === c.id ? (
                         <IoIosArrowUp />
                       ) : (
                         <IoIosArrowDown />
                       )}
                     </span>
                   </Button>
-                  <Responses openResps={openRespId} comment_id={c.ID} />
+                  {
+                    openRespId === c.id && (
+                      <Responses loadReps={loadResps} openResps={openRespId} comment_id={c.id} />
+                    )
+                  }
+                  
                 </div>
               ))}
             </>

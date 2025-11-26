@@ -28,7 +28,7 @@ export const MyPostsPage = () => {
   return (
     <div className="flex flex-col justify-between items-center">
       <h1 className="text-2xl my-10">Minhas Postagens</h1>
-      <div>
+      <div className="w-full flex justify-center">
         {Array.isArray(myPosts) && myPosts?.map((myPost, index) => (
           <PostCard
             key={`${myPost.id}_${index}`}

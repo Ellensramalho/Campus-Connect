@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BiPencil, BiTrash } from "react-icons/bi";
 import { Dialogs } from "../Dialog/Dialog";
-import { deleteComment, deletePost } from "@/api/posts";
+import { deleteComment, deletePost, deleteResponse, loadResponses } from "@/api/posts";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useActionContext } from "@/contexts/ActionsContext";
 import { toast } from "sonner";
@@ -26,6 +26,7 @@ interface ICommentToolsProps {
   titlePost?: string; // Para editar
   tagsPost?: ITag[] | undefined;
   type?: DialogType;
+  commentId?: number
 }
 
 const title = {
@@ -40,6 +41,7 @@ export function PostTools({
   titlePost,
   tagsPost,
   type,
+  commentId
 }: ICommentToolsProps) {
   const { token } = useAuthContext();
   const { listPosts, listComments, listMyPosts } = useActionContext();
@@ -53,11 +55,9 @@ export function PostTools({
       await listPosts(token);
       await listMyPosts(token);
       toast.success("Postagem deletada com sucesso");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
-
   };
 
   // Deletar comentário
@@ -67,6 +67,13 @@ export function PostTools({
     toast.success("Comentário deletado com sucesso");
   };
 
+  // Deletar resposta
+  const handleDeleteResponse = async () => {
+    await deleteResponse(ID, token);
+    await loadResponses(commentId, token);
+    toast.success("Resposta deletada com sucesso");
+  }
+ 
   return (
     <>
       <DropdownMenu modal={false}>
@@ -107,7 +114,6 @@ export function PostTools({
                     botton={title}
                     content={content}
                     ID={ID}
-
                   />
                 </div>
               </>
@@ -120,6 +126,32 @@ export function PostTools({
                   variant={"ghost"}
                   className="cursor-pointer w-full justify-start"
                   onClick={() => handleDeleteComment()}
+                >
+                  <BiTrash />
+                  Excluir
+                </Button>
+                <div className="cursor-pointer">
+                  <Dialogs
+                    type="editComment"
+                    title="Edição de comentário"
+                    label="Comentário"
+                    botton={title}
+                    content={content}
+                    ID={ID}
+                    post_id={post_id}
+                    tagsPost={tagsPost}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Se for aberto por uma resposta de comentário */}
+            {type === "editResponse" && (
+              <>
+                <Button
+                  variant={"ghost"}
+                  className="cursor-pointer w-full justify-start"
+                  onClick={() => handleDeleteResponse()}
                 >
                   <BiTrash />
                   Excluir

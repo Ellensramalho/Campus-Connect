@@ -17,7 +17,7 @@ export interface ITag {
   Name: string
 }
 
-export type DialogType = "createPost" | "editPost" | "createComment" | "editComment" | "createGroup";
+export type DialogType = "createPost" | "editPost" | "editResponse" | "createComment" | "editComment" | "createGroup";
 
 export interface IPost {
   id: number;
@@ -32,9 +32,17 @@ export interface IPost {
 }
 
 export interface IComment {
+  id: number;
+  user: IUser;
+  Likes: number | null;
+  content: string;
+  created_at: string;
+}
+
+export interface IResponsesComment {
   ID: number;
   User: IUser;
-  Likes: number | null;
+  comment_id: number;
   content: string;
   created_at: string;
 }
