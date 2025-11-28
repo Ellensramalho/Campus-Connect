@@ -119,7 +119,7 @@ export function Comments({ post_id }: ICommentsProps) {
             </div>
           ) : (
             <>
-              {comment?.length === 0 && (
+              {comment?.length === 0 || comment === null && (
                 <p className="text-sm text-muted-foreground">
                   Nenhum comentário ainda.
                 </p>

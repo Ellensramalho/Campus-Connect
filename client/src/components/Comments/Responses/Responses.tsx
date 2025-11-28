@@ -57,7 +57,7 @@ export const Responses = ({
         </span>
       ) : (
         Array.isArray(responses) &&
-        responses.length === 0 ? (
+        responses.length === 0 || responses === null ? (
           <span className="flex justify-center items-center">Nenhuma resposta...</span>
         ) : (
           responses?.map((resp) => (

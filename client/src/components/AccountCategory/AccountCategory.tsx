@@ -30,7 +30,7 @@ export function AccountCategory({ src, textButton }: IAccountCategoryProps) {
   const [registration, setRegistration] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const { token } = useAuthContext();
+  const { token, user } = useAuthContext();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
