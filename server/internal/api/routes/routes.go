@@ -43,6 +43,7 @@ func SetupRoutes(r *gin.Engine){
 
 	// Rotas para grupos
 	auth.POST("/become/teacher", handlers.BecomeTeacher)
+	auth.POST("/become/student", handlers.BecomeStudent)
 	auth.POST("/group/create", middlewares.AuthorizeRole("professor"), handlers.CreateGroup)
 	auth.DELETE("/group/delete/:id", middlewares.AuthorizeRole("professor"), handlers.DeleteGroup)
 	auth.PATCH("/group/edit/:id", middlewares.AuthorizeRole("professor"), handlers.EditGroup)
