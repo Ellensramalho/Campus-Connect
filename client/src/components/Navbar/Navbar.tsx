@@ -9,7 +9,6 @@ import {
   MessageCircle,
   Edit,
   Settings,
-  User,
 } from "lucide-react";
 import { MdUpload } from "react-icons/md";
 
@@ -18,7 +17,7 @@ import { AiOutlinePartition } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { FaRegBookmark } from "react-icons/fa";
 
-export const Navbar = () => {
+export const NavbarClient = () => {
   const router = useRouter();
 
   // Items para o mobile
@@ -159,7 +158,7 @@ export const Navbar = () => {
           <li>
             <Link
               className="flex w-[100px] px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col items-center justify-center"
-              href={"#"}
+              href={"/messages"}
             >
               <MessageCircle />
               {!shrunk && <span className="text-xs mt-1">Mensagens</span>}

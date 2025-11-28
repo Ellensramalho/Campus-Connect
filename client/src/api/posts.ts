@@ -79,6 +79,19 @@ export const SavePosts = async (post_id: number, token: string) => {
   return res.data;
 }
 
+// Listar postagens salvas
+export const GetSavedPosts = async (token: string) => {
+  const res = await axiosInstace.get(`/api/post/saved-posts`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+
+  return res.data;
+}
+
 // Dar Like nos posts
 export const likePosts = async (
   user_id: number | undefined,

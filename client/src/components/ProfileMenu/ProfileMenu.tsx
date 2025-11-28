@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { User } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BiExit } from "react-icons/bi";
 import { Spinner } from "../ui/spinner";
 
@@ -67,6 +69,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
                 <span className="text-sm text-muted-foreground">
                   {user?.role}
                 </span>
+                <hr />
               </>
             )}
           </div>

@@ -17,7 +17,6 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { Spinner } from "../ui/spinner";
 import { createComents, likeComment } from "@/api/posts";
 import { convertDate } from "@/services/formateDate";
-import { PostTools } from "../PostTools/PostTools";
 import { BiLike } from "react-icons/bi";
 import { User2Icon } from "lucide-react";
 import { Responses } from "./Responses/Responses";
@@ -25,6 +24,12 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { useState } from "react";
 import { FormResponse } from "./FormResponse/FormResponse";
 import { LiaCommentsSolid } from "react-icons/lia";
+import dynamic from "next/dynamic";
+
+const PostTools = dynamic(
+  () => import("../PostTools/PostTools"),
+  { ssr: false }
+);
 
 
 interface ICommentsProps {

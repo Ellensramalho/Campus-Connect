@@ -17,7 +17,7 @@ interface IAuthContextProps {
 
 }
 
-export const AuthContext = createContext<IAuthContextProps | null>(null);
+export const AuthContext = createContext<IAuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<IUser | null>(null);
@@ -128,8 +128,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuthContext = () => {
     const context = useContext(AuthContext);
-    if (context === null) {
-        throw new Error("useListContext deve ser usado dentro de um ListProvider");
+    if (context === undefined) {
+        throw new Error("use o authContext dentro de um AuthProvider");
     }
     return context;
 };

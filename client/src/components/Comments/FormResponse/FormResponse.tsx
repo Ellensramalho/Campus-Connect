@@ -1,3 +1,5 @@
+"use client";
+
 import { responseComment } from "@/api/posts";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

@@ -1,4 +1,4 @@
-"use clinet";
+"use client";
 
 import { ITag, IUser } from "@/types";
 import { useEffect, useState } from "react";
@@ -8,12 +8,17 @@ import { useActionContext } from "@/contexts/ActionsContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Comments } from "../Comments/Comments";
 import { convertDate } from "@/services/formateDate";
-import { PostTools } from "../PostTools/PostTools";
 import { FaRegBookmark } from "react-icons/fa";
 import { User2Icon } from "lucide-react";
 import { SavePosts } from "@/api/posts";
 import { toast } from "sonner";
 
+import dynamic from "next/dynamic";
+
+const PostTools = dynamic(
+  () => import("../PostTools/PostTools"),
+  { ssr: false }
+);
 
 interface IPostCardProps {
   title: string;

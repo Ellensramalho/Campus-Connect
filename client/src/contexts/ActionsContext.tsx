@@ -1,6 +1,8 @@
+"use client";
+
 import React, { createContext, useState, useEffect, useContext } from "react";
 
-import { loadPosts, likePosts, loadComments, removeLikePost, LoadMyPosts } from "@/api/posts";
+import { loadPosts, likePosts, loadComments, removeLikePost, LoadMyPosts, GetSavedPosts } from "@/api/posts";
 import { IComment, IPost } from "@/types";
 
 interface IActionsContext {
@@ -13,14 +15,17 @@ interface IActionsContext {
     comment: IComment[] | null
     listMyPosts: (token: string) => Promise<any>
     myPosts: IPost[] | null
+    postSaved: IPost[] | null
+    listSavedPosts: (token: string) => Promise<void>
 }
 
-export const ActionContext = createContext<IActionsContext | null>(null);
+export const ActionContext = createContext<IActionsContext | undefined>(undefined);
 
 export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     const [loadingAction, setLoadingAction] = useState<boolean>(false);
     const [posts, setPosts] = useState<IPost[] | null>(null);
     const [myPosts, setMyPosts] = useState<IPost[] | null>(null);
+    const [postSaved, setPostSaved] = useState<IPost[] | null>(null);
     const [comment, setComments] = React.useState<IComment[] | null>(null);
 
 
@@ -52,6 +57,22 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(err);
         }
         finally {
+            setLoadingAction(false);
+        }
+    }
+
+    // Listar postagens salvas
+    const listSavedPosts = async (token: string) => {
+        setLoadingAction(true);
+        try{
+            const data = await GetSavedPosts(token);
+            console.log(data);
+            setPostSaved(data.posts);
+        }
+        catch(err: any){
+            console.log(err);
+        }
+        finally{
             setLoadingAction(false);
         }
     }
@@ -125,7 +146,9 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
         likeInPost,
         listComments,
         unlikePost,
-        comment
+        comment,
+        listSavedPosts,
+        postSaved
     }
 
     return (
@@ -138,8 +161,8 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useActionContext = () => {
     const context = useContext(ActionContext);
-    if (context === null) {
-        throw new Error("useListContext deve ser usado dentro de um ListProvider");
+    if (context === undefined) {
+        throw new Error("use o actionContext dentro de um ActionProvider"); 
     }
     return context;
 };

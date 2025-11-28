@@ -1,13 +1,19 @@
 "use client";
 
 import { loadResponses } from "@/api/posts";
-import { PostTools } from "@/components/PostTools/PostTools";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { convertDate } from "@/services/formateDate";
 import { IResponsesComment } from "@/types";
-import { User2, User2Icon } from "lucide-react";
+import { User2Icon } from "lucide-react";
 import { useEffect, useState } from "react";
+
+import dynamic from "next/dynamic";
+
+const PostTools = dynamic(
+  () => import("../../PostTools/PostTools"),
+  { ssr: false }
+);
 
 interface IResponsesProp {
   comment_id: number;

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { MoreHorizontalIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ const title = {
   icon: <BiPencil />,
 };
 
-export function PostTools({
+export default function PostTools({
   ID,
   content,
   post_id,
@@ -46,6 +47,7 @@ export function PostTools({
   const { token } = useAuthContext();
   const { listPosts, listComments, listMyPosts } = useActionContext();
   const [loading, setLoading] = useState<boolean>(false);
+
 
   // Deletar postagem caso seja isPost
   const handleDeletePost = async () => {

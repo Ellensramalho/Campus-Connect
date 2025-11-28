@@ -1,3 +1,4 @@
+"use client";
 
 import { MdGroups, MdOutlineGroupAdd } from "react-icons/md";
 import { IoSchoolSharp } from "react-icons/io5";
@@ -14,7 +15,6 @@ import {
   CommandSeparator,
 } from "@/components/ui/command"
 import { Dialogs } from "../Dialog/Dialog";
-import { useAuthContext } from "@/contexts/AuthContext";
 
 const title = {
   value: "Adicionar Postagem",
@@ -28,8 +28,6 @@ const titleGrout = {
 
 
 export function Sidebar() {
-
-  const { user } = useAuthContext();
 
   return (
     <Command className="rounded-lg border shadow-md md:w-[350px]">
