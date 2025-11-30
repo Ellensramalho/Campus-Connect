@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/LucasPaulo001/Campus-Connect/internal/dto"
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
 	config "github.com/LucasPaulo001/Campus-Connect/internal/repository"
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func CreateGroup(c *gin.Context) {
 
 	for _, studentId := range body.Members {
 		var count int64
-		config.DB.Model(&models.Student{}).Where("id = ?", studentId).Count(&count)
+		config.DB.Model(&models.Student{}).Where("user_id = ?", studentId).Count(&count)
 		if count == 0 {
 			continue
 		}
@@ -169,5 +170,139 @@ func EditGroup(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Dados de grupo atualizados com sucesso."})
 
+}
+
+// Listar grupos criados pelo professor
+func ListMyGroups(c *gin.Context) {
+	teacherId := c.GetUint("userId")
+
+	var groups []models.Group
+	if err := config.DB.
+		Preload("Members").
+		Preload("Members.Student").
+		Preload("Members.Student.User").
+		Preload("Teacher").
+		Preload("Teacher.User").
+		Where("teacher_id = ?", teacherId).
+		Find(&groups).
+		Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var response []dto.GroupResponse
+	for _, group := range groups {
+		var membersDto []dto.MemberResponse
+
+		for _, m := range group.Members {
+			membersDto = append(membersDto, dto.MemberResponse{
+				ID:        m.Student.UserID,
+				StudentID: m.StudentID,
+				Student: dto.StudentInfo{
+					Name: m.Student.User.Name,
+					Role: m.Student.User.Role,
+				},
+			})
+		}
+
+		response = append(response, dto.GroupResponse{
+			ID:  			group.ID,
+			Name: 			group.Name,
+			Description: 	group.Description,
+			TeacherID: 		teacherId,
+			Teacher: dto.TeacherResponse{
+				Departament: group.Teacher.Departament,
+				Formation:   group.Teacher.Formation,
+				User: 		 dto.UserInfo{
+					ID: 	group.Teacher.UserID,
+					Name: 	group.Teacher.User.Name,
+					Role:   group.Teacher.User.Role,
+				},	
+			},
+			Members: membersDto,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"groups": response,
+	})
+}
+
+// Adicionar estudantes
+func AddStudents(c *gin.Context) {
+	teacherId := c.GetUint("userId")
+	
+	groupIdStr := c.Param("id")
+	groupId, err := strconv.ParseUint(groupIdStr, 10, 30)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var body struct {
+		Members   []uint   `json:"members"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var group models.Group
+	if err := config.DB.
+		Where("id = ?", groupId).
+		Find(&group).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Grupo não encontrado"})
+			return
+		}
+
+	if group.TeacherID != teacherId {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Permissão negada"})
+		return
+	}
+
+	var existingMembers []models.Member
+	config.DB.Where("group_id = ?", group.ID).Find(&existingMembers)
+
+	// Criar um mapa para verificar duplicados
+	existingMap := make(map[uint]bool)
+	for _, m := range existingMembers {
+		existingMap[m.StudentID] = true
+	}
+
+	// Filtrar e criar novos membros
+	var newMembers []models.Member
+
+	for _, studentId := range body.Members {
+		// Verifica se o estudante existe
+		var count int64
+		config.DB.Model(&models.Student{}).Where("user_id = ?", studentId).Count(&count)
+		if count == 0 {
+			continue
+		}
+
+		// Verifica se já está no grupo
+		if existingMap[studentId] {
+			continue
+		}
+
+		newMembers = append(newMembers, models.Member{
+			StudentID: studentId,
+			GroupID:   uint(groupId),
+		})
+	}
+
+	// Inserir no banco
+	if len(newMembers) > 0 {
+		if err := config.DB.Create(&newMembers).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao adicionar estudantes"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Estudantes adicionados com sucesso",
+		"added":   newMembers,
+	})
 }
 

@@ -47,4 +47,6 @@ func SetupRoutes(r *gin.Engine){
 	auth.POST("/group/create", middlewares.AuthorizeRole("professor"), handlers.CreateGroup)
 	auth.DELETE("/group/delete/:id", middlewares.AuthorizeRole("professor"), handlers.DeleteGroup)
 	auth.PATCH("/group/edit/:id", middlewares.AuthorizeRole("professor"), handlers.EditGroup)
+	auth.GET("/group/list", handlers.ListMyGroups)
+	auth.POST("/group/:id/members", middlewares.AuthorizeRole("professor"), handlers.AddStudents)
 }

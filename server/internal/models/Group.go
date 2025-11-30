@@ -1,11 +1,11 @@
 package models
 
 type Member struct {
-	ID 			uint 		`gorm:"primaryKey"`
-	StudentID	uint 		`json:"student_id"`
-	Student		Student		`gorm:"foreignKey:StudentID"`
-	GroupID		uint 		`json:"group_id"`
-	Group		Group		`gorm:"foreignKey:GroupID"`
+	ID        uint    `gorm:"primaryKey"`
+	StudentID uint    `json:"student_id"`
+	Student   Student `gorm:"foreignKey:StudentID;references:UserID"`
+	GroupID   uint    `json:"group_id"`
+	Group     Group   `gorm:"foreignKey:GroupID"`
 }
 
 
