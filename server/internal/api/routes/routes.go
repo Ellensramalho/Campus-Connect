@@ -49,4 +49,5 @@ func SetupRoutes(r *gin.Engine){
 	auth.PATCH("/group/edit/:id", middlewares.AuthorizeRole("professor"), handlers.EditGroup)
 	auth.GET("/group/list", handlers.ListMyGroups)
 	auth.POST("/group/:id/members", middlewares.AuthorizeRole("professor"), handlers.AddStudents)
+	auth.GET("/students/search", handlers.SearchStudent)
 }

@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/LucasPaulo001/Campus-Connect/internal/dto"
 	"github.com/LucasPaulo001/Campus-Connect/internal/models"
@@ -306,3 +307,31 @@ func AddStudents(c *gin.Context) {
 	})
 }
 
+// Buscar aluno pelo nome de usuário
+func SearchStudent(c *gin.Context) {
+	q := c.Query("q")
+
+	if q == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Conteúdo de busca obrigatório."})
+		return
+	}
+
+	var students []models.Student
+	if err := config.DB.
+        Joins("JOIN users ON users.id = students.user_id").
+        Preload("User").
+        Where(`
+            LOWER(users.name_user) LIKE ? 
+            OR LOWER(users.email) LIKE ?
+        `,
+            "%"+strings.ToLower(q)+"%",
+            "%"+strings.ToLower(q)+"%",
+        ).
+        Find(&students).Error; err != nil {
+
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+	c.JSON(http.StatusOK, students)
+}
