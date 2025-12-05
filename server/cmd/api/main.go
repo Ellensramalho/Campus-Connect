@@ -38,6 +38,7 @@ func main(){
 		&models.Student{},
 		&models.PasswordReset{},
 		&models.PostTag{},
+		&models.Challenge{},
 	)
 
 	if os.Getenv("RUN_SEED") == "true" {

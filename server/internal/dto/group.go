@@ -28,3 +28,14 @@ type TeacherResponse struct {
 	Formation 		string  	`json:"formation"`
 	User 			UserInfo 	`json:"user"`
 }
+
+type ChalengeResponse struct {
+	ID 				uint 	 		`json:"id"`
+	Title   		string	 		`json:"title"`
+	Description		string 	 		`json:"description"`
+	Teacher 		TeacherResponse	`json:"teacher"`
+	Type 			string 			`json:"type"`
+	XP 				int 			`json:"xp"`
+	GroupID 		uint 			`json:"group_id"`
+	TeacherID   	uint   			`json:"teacher_id"`
+}

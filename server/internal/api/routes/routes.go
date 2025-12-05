@@ -51,4 +51,8 @@ func SetupRoutes(r *gin.Engine){
 	auth.POST("/group/:id/members", middlewares.AuthorizeRole("professor"), handlers.AddStudents)
 	auth.GET("/students/search", handlers.SearchStudent)
 	auth.GET("/group/:id", handlers.LoadGroup)
+
+	// Desafios
+	auth.POST("/group/:id/challenge", handlers.CreateChallenge)
+	auth.GET("/group/:id/challenge", handlers.ListChallenges)
 }
