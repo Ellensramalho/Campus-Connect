@@ -60,3 +60,43 @@ export interface IStudent {
   course: string;
   matricula: string;
 }
+
+// Grupos
+type Teacher = {
+  departament: string;
+  formation: string;
+  user: IUser;
+};
+
+type Members = {
+  id: number;
+  student_id: number;
+  student: {
+    id: number;
+    name: string;
+    email: string;
+    bio: string;
+    role: string;
+  };
+};
+
+export interface IGroup {
+  id: string;
+  nome: string;
+  Description: string;
+  teacher_id: number;
+  teacher: Teacher;
+  user: IUser;
+  members: Members[];
+}
+
+export interface IChallenge {
+  id: number;
+  title: string;
+  description: string;
+  teacher: Teacher;
+  type: string;
+  xp: number;
+  group_id: number;
+  teacher_id: number;
+}

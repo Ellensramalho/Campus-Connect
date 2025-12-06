@@ -3,7 +3,8 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 
 import { loadPosts, likePosts, loadComments, removeLikePost, LoadMyPosts, GetSavedPosts } from "@/api/posts";
-import { IComment, IPost } from "@/types";
+import { IChallenge, IComment, IPost } from "@/types";
+import { LoadChallenges } from "@/api/groups";
 
 interface IActionsContext {
     listPosts: (token: string) => Promise<any>
@@ -17,6 +18,8 @@ interface IActionsContext {
     myPosts: IPost[] | null
     postSaved: IPost[] | null
     listSavedPosts: (token: string) => Promise<void>
+    listChallenges: (token: string, group_id: number) => Promise<any>
+    challenge: IChallenge[] | null
 }
 
 export const ActionContext = createContext<IActionsContext | undefined>(undefined);
@@ -26,7 +29,8 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
     const [posts, setPosts] = useState<IPost[] | null>(null);
     const [myPosts, setMyPosts] = useState<IPost[] | null>(null);
     const [postSaved, setPostSaved] = useState<IPost[] | null>(null);
-    const [comment, setComments] = React.useState<IComment[] | null>(null);
+    const [comment, setComments] = useState<IComment[] | null>(null);
+    const [challenge, setChallenge] = useState<IChallenge[] | null>(null);
 
 
     // Listar postagens do feed
@@ -133,6 +137,18 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    // Listagem de desafios dos grupos
+    const listChallenges = async (token: string, group_id: number) => {
+        try{
+            const res = await LoadChallenges(token, group_id);
+            console.log(res);
+            setChallenge(res);
+        }
+        catch(err: any){
+            console.log(err);
+        }
+    }
+
     const contextValues = {
         listPosts,
         listMyPosts,
@@ -144,7 +160,9 @@ export const ActionProvider = ({ children }: { children: React.ReactNode }) => {
         unlikePost,
         comment,
         listSavedPosts,
-        postSaved
+        postSaved,
+        listChallenges,
+        challenge
     }
 
     return (

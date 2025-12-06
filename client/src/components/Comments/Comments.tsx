@@ -26,6 +26,10 @@ import { FormResponse } from "./FormResponse/FormResponse";
 import { LiaCommentsSolid } from "react-icons/lia";
 import dynamic from "next/dynamic";
 
+const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
+  ssr: false
+});
+
 const PostTools = dynamic(
   () => import("../PostTools/PostTools"),
   { ssr: false }
@@ -149,7 +153,7 @@ export function Comments({ post_id }: ICommentsProps) {
                       />
                     )}
                   </span>
-                  <p className="text-sm">{c.content}</p>
+                  <Markdown source={c.content} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
 
                   {/* Botões de (like, responder e respostas) */}
                   <div className="mt-5 flex flex-col md:flex-row items-start md:items-center">

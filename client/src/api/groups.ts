@@ -1,3 +1,4 @@
+import { ParamValue } from "next/dist/server/request/params";
 import axiosInstace from "./axiosInstance";
 
 // Listagem de grupos criados pelo professor
@@ -42,6 +43,58 @@ export const CreateNewGroup = async (
       },
     }
   );
+
+  return res.data;
+};
+
+// Detalhes de um grupo
+export const LoadGroup = async (
+  token: string,
+  group_id: number | ParamValue
+) => {
+  const res = await axiosInstace.get(`/api/group/${group_id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data;
+};
+
+// Criando desafio
+export const CreateChallenge = async (
+  token: string,
+  group_id:  number | undefined,
+  title: string,
+  description: string,
+  type: string,
+  xp: number
+) => {
+  const res = await axiosInstace.post(
+    `/api/group/${group_id}/challenge`,
+    {
+      title,
+      description,
+      type,
+      xp,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return res.data;
+};
+
+// Listar desafios
+export const LoadChallenges = async (token: string, group_id: number) => {
+  const res = await axiosInstace.get(`/api/group/${group_id}/challenge`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return res.data;
 };

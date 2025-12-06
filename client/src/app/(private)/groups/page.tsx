@@ -4,36 +4,12 @@ import { LoadGroups } from "@/api/groups";
 import { LoadingPage } from "@/components/Loading/LoadingPage";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { IUser } from "@/types";
+import { IGroup, IUser } from "@/types";
 import { GraduationCap } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type Teacher = {
-  departament: string;
-  formation: string;
-};
 
-type Members = {
-  id: number;
-  student_id: number;
-  student: {
-    id: number;
-    name: string;
-    email: string;
-    bio: string;
-    role: string;
-  };
-};
-
-interface IGroup {
-  id: string;
-  nome: string;
-  Description: string;
-  teacher_id: number;
-  teacher: Teacher;
-  user: IUser;
-  members: Members;
-}
 
 export default function Groups() {
   const [myGroups, setMyGroups] = useState<IGroup[] | null>(null);
@@ -69,27 +45,29 @@ export default function Groups() {
           <div className="grid grid-cols-1 w-100% sm:grid-cols-2 justify-items-center items-center md:grid-cols-2 gap-4">
             {
               myGroups?.map((group) => (
-                <div
-                  key={group.id}
-                  className="p-4
-                        flex flex-col items-center justify-center
-                        mx-3.5
-                        cursor-pointer
-                        bg-white
-                        border-2 border-transparent
-                        rounded-lg
-                        shadow-lg
-                        hover:border-blue-500 hover:shadow-xl hover:scale-[1.02]
-                        transition-all duration-300
-                        w-[90%]
-                        h-full"
-                >
-                  <span>
-                    <GraduationCap />
-                  </span>
-                  <h2 className="font-bold">{group.nome}</h2>
-                  <p>{group.Description}</p>
-                </div>
+                <Link key={group.id} className="w-full" href={`/groups/${group.id}`}>
+                  <div
+                    className="p-4
+                          flex flex-col items-center justify-center
+                          mx-3.5
+                          cursor-pointer
+                          bg-white
+                          border-2 border-transparent
+                          rounded-lg
+                          shadow-lg
+                          hover:border-blue-500 hover:shadow-xl hover:scale-[1.02]
+                          transition-all duration-300
+                          w-[90%]
+                          dark:bg-gray-800
+                          h-full"
+                  >
+                    <span>
+                      <GraduationCap />
+                    </span>
+                    <h2 className="font-bold">{group.nome}</h2>
+                    <p>{group.Description}</p>
+                  </div>
+                </Link>
               ))
             }
           </div>

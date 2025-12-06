@@ -15,10 +15,14 @@ import { toast } from "sonner";
 
 import dynamic from "next/dynamic";
 
-const PostTools = dynamic(
-  () => import("../PostTools/PostTools"),
-  { ssr: false }
-);
+const Markdown = dynamic(() => import("@uiw/react-md-editor").then(mod => mod.default.Markdown), {
+  ssr: false
+});
+
+
+const PostTools = dynamic(() => import("../PostTools/PostTools"), {
+  ssr: false,
+});
 
 interface IPostCardProps {
   title: string;
@@ -68,7 +72,7 @@ export const PostCard = ({
     await listSavedPosts(token);
     console.log(data);
     toast.success(`${data.message}`);
-  }
+  };
 
   // Formatando data
   const date = convertDate(created_at);
@@ -78,7 +82,7 @@ export const PostCard = ({
   }, [liked_by_me]);
 
   return (
-    <div className="bg-white mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
+    <div className="bg-white dark:bg-gray-800 mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
         <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
           <User2Icon className="size-8" />
@@ -105,7 +109,10 @@ export const PostCard = ({
       <hr />
       <div className="flex flex-col gap-5">
         <h2 className="font-bold md:text-2xl">{title}</h2>
-        <p>{content}</p>
+        <div>
+          
+          <Markdown source={content} style={{ whiteSpace: "pre-wrap", backgroundColor: "transparent" }} />
+        </div>
       </div>
       <hr />
       <div className="flex justify-between">
@@ -126,8 +133,8 @@ export const PostCard = ({
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />
         </Button>
-        <Button 
-          variant={"ghost"} 
+        <Button
+          variant={"ghost"}
           className="cursor-pointer"
           onClick={() => handleSavePost()}
         >
