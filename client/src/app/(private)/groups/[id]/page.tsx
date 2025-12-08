@@ -100,6 +100,7 @@ export default function GroupDetail() {
           {user?.role === "professor" && (
             <TabsContent value="settings">
               <SettingsGroups
+                group_id={Number(group?.id)}
                 title={group?.nome}
                 description={group?.Description}
               />

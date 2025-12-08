@@ -64,7 +64,7 @@ export const LoadGroup = async (
 // Criando desafio
 export const CreateChallenge = async (
   token: string,
-  group_id:  number | undefined,
+  group_id: number | undefined,
   title: string,
   description: string,
   type: string,
@@ -95,6 +95,29 @@ export const LoadChallenges = async (token: string, group_id: number) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return res.data;
+};
+
+// Editar dados de um grupo
+export const EditGroupData = async (
+  token: string,
+  name: string | undefined,
+  description: string | undefined,
+  group_id: number
+) => {
+  const res = await axiosInstace.patch(
+    `/api/group/edit/${group_id}`,
+    {
+      name,
+      description,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return res.data;
 };
