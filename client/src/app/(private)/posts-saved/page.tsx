@@ -16,23 +16,28 @@ export default function PostsSaved() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      {postSaved?.length == 0 || postSaved === null ? (
-        <NotFound text="Nenhuma postagem salva..." />
-      ) : (
-        postSaved?.map((post) => (
-          <PostCard
-            key={post.id}
-            title={post.title}
-            content={post.content}
-            created_at={post.createdAt}
-            likes_count={post.likes}
-            author={post.author}
-            postId={post.id}
-            liked_by_me={false}
-          />
-        ))
-      )}
+    <div className="w-full">
+      <span className="w-full flex text-2xl items-center justify-center">Postagens Salvas</span>
+      <hr className="my-5" />
+      <div className="grid md:grid-cols-2 grid-cols-1 gap-15 justify-center justify-items-center">
+        {postSaved?.length == 0 || postSaved === null ? (
+          <NotFound text="Nenhuma postagem salva..." />
+        ) : (
+          postSaved?.map((post) => (
+            <PostCard
+              key={post.id}
+              title={post.title}
+              content={post.content}
+              created_at={post.createdAt}
+              liked={post.liked}
+              likes_count={post.likes}
+              author={post.author}
+              postId={post.id}
+              saved={post.saved}
+            />
+          ))
+        )}
+      </div>
     </div>
   );
 }

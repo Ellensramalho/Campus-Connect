@@ -3,15 +3,15 @@ import axiosInstace from "./axiosInstance";
 // Editar dados do perfil
 export const EditData = async (
   name: string | undefined,
-  name_user: string | undefined,
+  nameUser: string | undefined,
   bio: string,
   token: string
 ) => {
   const res = await axiosInstace.patch(
-    "/api/auth/profile",
+    "/api/auth/profile-edit",
     {
       name,
-      name_user,
+      nameUser,
       bio,
     },
     {

@@ -7,12 +7,6 @@ export interface IUser {
   bio: string;
 }
 
-interface Like {
-  ID: number;
-  UserId: number;
-  PostId: number;
-}
-
 export type DialogType =
   | "createPost"
   | "editPost"
@@ -28,6 +22,8 @@ export interface IPost {
   author: IUser;
   likes: number;
   createdAt: string;
+  liked: boolean;
+  saved: boolean;
 }
 
 

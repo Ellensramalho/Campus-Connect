@@ -38,7 +38,8 @@ export default function Home() {
               likes_count={post.likes}
               author={post.author}
               postId={post.id}
-              liked_by_me={false}
+              liked={post.liked}
+              saved={post.saved}
             />
           ))
         )}

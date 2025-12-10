@@ -2,7 +2,7 @@ import axiosInstace from "./axiosInstance";
 
 // Criar postagem
 export const addPost = async (title: string, content: string | undefined, token: string, tags?: string[]) => {
-  const res = await axiosInstace.post("/api/posts", 
+  const res = await axiosInstace.post("/api/post", 
     { title, content, tags },
     {
       headers: {

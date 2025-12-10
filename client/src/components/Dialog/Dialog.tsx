@@ -106,13 +106,13 @@ export function Dialogs({
       toast.success("Postagem feita com sucesso!");
 
       await listPosts(token);
-
       setTitlePost("");
       setValue("");
       setTags("");
     } finally {
       setLoadingEdit(false);
       setOpen(false);
+      document.body.style = "auto"
     }
   };
 
@@ -142,11 +142,22 @@ export function Dialogs({
     } finally {
       setLoadingEdit(false);
       setOpen(false);
+      document.body.style = "auto"
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+
+        if (!isOpen) {
+          // restaura automaticamente o scroll da página
+          document.body.style.overflow = "auto";
+        }
+      }}
+    >
       <form>
         <DialogTrigger asChild>
           <Button
