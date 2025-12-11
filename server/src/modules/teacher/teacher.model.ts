@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { TTeacher } from "../../types/teacher/teacher.type.js";
+import { TTeacher } from "../../@types/teacher/teacher.type.js";
 
 const TeacherSchema = new mongoose.Schema<TTeacher>({
   user: {
@@ -38,12 +38,12 @@ const TeacherSchema = new mongoose.Schema<TTeacher>({
 
   isVerified: {
     type: Boolean,
-    default: false
+    default: false,
   },
 
   verifiedAt: {
     type: Date,
-    default: null
+    default: null,
   },
 
   socialLinks: {
@@ -55,7 +55,7 @@ const TeacherSchema = new mongoose.Schema<TTeacher>({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 export default mongoose.model("Teacher", TeacherSchema);

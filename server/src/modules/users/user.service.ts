@@ -1,7 +1,7 @@
 import { UserRepository } from "./user.repository.js";
 import { jwtGenerate } from "../../settings/jwt/jwt.js";
 import bcrypt from "bcrypt";
-import { TUser } from "../../types/user/user.type.js";
+import { TUser } from "../../@types/user/user.type.js";
 
 // Registro
 export async function RegisterService({
@@ -32,7 +32,7 @@ export async function RegisterService({
     nameUser,
     email,
     password: hashPass,
-    biography: ""
+    biography: "",
   };
 
   // Salvando no banco
@@ -69,6 +69,8 @@ export function ProfileService(user: TUser) {
     name_user: user.nameUser,
     role: user.role,
     email: user.email,
+    xp: user.xp,
+    biography: user.biography,
   };
 
   return dataFormated;
@@ -100,16 +102,15 @@ export async function ProfileEditService(id: string, updates: DataUpdates) {
 }
 
 // Buscar usuários
-export async function SearchUsersService(query: string){
+export async function SearchUsersService(userId: string, query: string) {
+  if (!query) return [];
 
-  if(!query) return [];
-
-  const users = await UserRepository.search(query);
+  const users = await UserRepository.search(userId, query);
 
   return users.map((u) => ({
     id: u._id,
     name: u.name,
     email: u.email,
-    role: u.role
-  }))
+    role: u.role,
+  }));
 }

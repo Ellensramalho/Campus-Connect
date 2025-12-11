@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { TGroup } from "../../../types/group/group.type.js";
+import { TGroup } from "../../../@types/group/group.type.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { GroupRepository } from "../group.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
@@ -8,6 +8,7 @@ type TData = {
   authorId: string;
   name: string;
   description: string;
+  members: Types.ObjectId[];
 };
 
 // Criar um grupo
@@ -15,6 +16,7 @@ export async function CreateGroupService({
   authorId,
   name,
   description,
+  members,
 }: TData) {
   const author = await TeacherRepository.findByUser(authorId);
 
@@ -28,11 +30,13 @@ export async function CreateGroupService({
 
   const authorObjectId = new Types.ObjectId(author._id);
 
-  const data: TGroup = {
+  const membersObjectId = members.map((id) => new Types.ObjectId(id));
+
+  const data = {
     author: authorObjectId,
     name,
     description,
-    members: [authorObjectId]
+    members: [...membersObjectId, authorObjectId],
   };
 
   const newGroup = await GroupRepository.create(data);
@@ -84,41 +88,41 @@ type TGroupResponse = {
 };
 
 type TDataUpdates = {
-  name: string,
-  description: string
-}
-
+  name: string;
+  description: string;
+};
 
 // Editar dados do grupo
-export async function EditGroupDataService(userId: string, groupId: string, updates: TDataUpdates){
-
+export async function EditGroupDataService(
+  userId: string,
+  groupId: string,
+  updates: TDataUpdates
+) {
   const group = await GroupRepository.findById(groupId);
 
-  if(!group){
+  if (!group) {
     throw new Error("Grupo não encontrado.");
   }
 
   const user = await UserRepository.findById(userId);
 
-  if (!user){
+  if (!user) {
     throw new Error("Usuário não encontrado.");
   }
 
   const teacher = await TeacherRepository.findByUser(userId);
 
-  if(!teacher){
+  if (!teacher) {
     throw new Error("Professor não encontrado.");
   }
 
-  if(group.author.toString() !== teacher._id.toString()){
+  if (group.author.toString() !== teacher._id.toString()) {
     throw new Error("Permissões insuficientes.");
   }
 
   const newData = await GroupRepository.update(groupId, updates);
 
   return {
-    newData
-  }
+    newData,
+  };
 }
-
-

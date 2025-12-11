@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { TAuthor, TPost } from "../../../types/post/post.type.js";
+import { TAuthor, TPost } from "../../../@types/post/post.type.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 import postModel from "../post.model.js";
@@ -18,10 +18,9 @@ export async function ListAllPostService(userId: string) {
     const user = author?.user;
 
     const userObjectId = new Types.ObjectId(userId);
-    const liked = post.likes?.some(id => id.equals(userObjectId));
+    const liked = post.likes?.some((id) => id.equals(userObjectId));
 
-    const saved = savedIds.some(savedId =>
-      savedId.equals(post._id));
+    const saved = savedIds.some((savedId) => savedId.equals(post._id));
 
     return {
       id: post._id,
@@ -40,7 +39,7 @@ export async function ListAllPostService(userId: string) {
       comments: post?.comments?.length,
       createdAt: post.createdAt,
       liked: liked,
-      saved: saved
+      saved: saved,
     };
   });
 
@@ -68,11 +67,9 @@ export async function ListAuthorPostsService(authorId: string) {
     const user = author?.user;
 
     const userObjectId = new Types.ObjectId(authorId);
-    const liked = post.likes?.some(id => id.equals(userObjectId));
+    const liked = post.likes?.some((id) => id.equals(userObjectId));
 
-    const saved = savedIds.some(savedId =>
-    savedId.equals(post._id));
-
+    const saved = savedIds.some((savedId) => savedId.equals(post._id));
 
     return {
       id: post._id,
@@ -82,6 +79,7 @@ export async function ListAuthorPostsService(authorId: string) {
             name: author.user?.name,
             email: author.user?.email,
             role: author.user?.role,
+            userId: author.user._id,
           }
         : null,
       title: post.title,
@@ -89,7 +87,7 @@ export async function ListAuthorPostsService(authorId: string) {
       tags: post.tags,
       likes: post.likes,
       liked: liked,
-      saved: saved
+      saved: saved,
     };
   });
 
@@ -106,15 +104,13 @@ export async function ListSavePostsService(userId: string) {
 
   const savedIds = user.postsSaveds || [];
 
-  const posts = await postModel
-    .find({ _id: { $in: savedIds } })
-    .populate({
-      path: "author",
-      populate: {
-        path: "user",
-        select: "name email role",
-      },
-    });
+  const posts = await postModel.find({ _id: { $in: savedIds } }).populate({
+    path: "author",
+    populate: {
+      path: "user",
+      select: "name email role",
+    },
+  });
 
   const formatted = posts.map((post: any) => {
     const author = post.author;
@@ -123,8 +119,7 @@ export async function ListSavePostsService(userId: string) {
     const userObjectId = new Types.ObjectId(userId);
     const liked = post.likes?.some((id: any) => id.equals(userObjectId));
 
-    const saved = savedIds.some(savedId =>
-    savedId.equals(post._id));
+    const saved = savedIds.some((savedId) => savedId.equals(post._id));
 
     return {
       id: post._id,
@@ -142,7 +137,7 @@ export async function ListSavePostsService(userId: string) {
       comments: post.comments?.length || 0,
       createdAt: post.createdAt,
       liked: liked,
-      saved: saved
+      saved: saved,
     };
   });
 
@@ -183,9 +178,7 @@ export async function ListPostByTeacherService(teacherId: string) {
     };
   });
 
-  return{
-    posts: dataFormated
-  }
+  return {
+    posts: dataFormated,
+  };
 }
-
-

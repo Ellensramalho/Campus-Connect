@@ -9,9 +9,9 @@ export async function CreateGroupController(req: CustomRequest, res: Response) {
 
     const authorId = req.user._id;
 
-    const { name, description } = req.body;
+    const { name, description, members } = req.body;
 
-    const result = await CreateGroupService({authorId, name, description});
+    const result = await CreateGroupService({authorId, name, description, members});
 
     res.status(201).json({ msg: result.msg, new: result.newGroup });
 

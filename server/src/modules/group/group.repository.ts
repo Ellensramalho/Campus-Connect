@@ -1,4 +1,4 @@
-import { TGroup } from "../../types/group/group.type.js";
+import { TGroup } from "../../@types/group/group.type.js";
 import groupModel from "./group.model.js";
 
 export const GroupRepository = {
@@ -16,7 +16,7 @@ export const GroupRepository = {
     });
   },
 
-  update(id: string, data: Partial<TGroup>){
+  update(id: string, data: Partial<TGroup>) {
     return groupModel.findByIdAndUpdate(id, data, { new: true });
   },
 

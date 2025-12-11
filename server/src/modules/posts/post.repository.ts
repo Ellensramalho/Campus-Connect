@@ -1,15 +1,15 @@
 import { Types } from "mongoose";
 import postModel from "./post.model.js";
 import { TCreatePostData } from "./services/PostAction.service.js";
-import { TPost } from "../../types/post/post.type.js";
+import { TPost } from "../../@types/post/post.type.js";
 
 export const PostRepository = {
   findAll() {
     return postModel.find().populate({
       path: "author",
       populate: {
-        path: "user", 
-        select: "name emai role", 
+        path: "user",
+        select: "name emai role",
       },
     });
   },
@@ -21,10 +21,10 @@ export const PostRepository = {
   findPostByAuthor(id: string) {
     const objectId = new Types.ObjectId(id);
     return postModel.find({ author: objectId }).populate({
-      path: "author", 
+      path: "author",
       populate: {
         path: "user",
-        select: "name email role", 
+        select: "name email role",
       },
     });
   },
@@ -37,8 +37,7 @@ export const PostRepository = {
     return postModel.findByIdAndDelete(id);
   },
 
-  update(id: string, data: Partial<TPost>){
+  update(id: string, data: Partial<TPost>) {
     return postModel.findByIdAndUpdate(id, data, { new: true });
-  }
-
+  },
 };

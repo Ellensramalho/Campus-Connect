@@ -1,4 +1,4 @@
-import { TResponse } from "../../types/response/response.type.js";
+import { TResponse } from "../../@types/response/response.type.js";
 import responseModel from "./response.model.js";
 
 export const ResponseRepository = {

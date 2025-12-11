@@ -63,7 +63,9 @@ export async function SearchUserController(req: CustomRequest, res: Response){
 
     const { q } = req.query
 
-    const result = await SearchUsersService(String(q || ''));
+    const userId = req.user._id;
+
+    const result = await SearchUsersService(userId, String(q || ''));
 
     res.status(200).json(result);
 

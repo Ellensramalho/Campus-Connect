@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { TResponse } from "../../../types/response/response.type.js";
+import { TResponse } from "../../../@types/response/response.type.js";
 import { CommentRepository } from "../../comment/comment.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 import { ResponseRepository } from "../response.repository.js";

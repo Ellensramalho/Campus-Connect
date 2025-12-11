@@ -1,7 +1,6 @@
-import { TResponse } from "../../../types/response/response.type.js";
+import { TResponse } from "../../../@types/response/response.type.js";
 import { CommentRepository } from "../../comment/comment.repository.js";
 import { ResponseRepository } from "../response.repository.js";
-
 
 export async function ListResponsesService(commentId: string) {
   const comment = await CommentRepository.findById(commentId);
@@ -15,7 +14,7 @@ export async function ListResponsesService(commentId: string) {
   const formatedData = responses.map((res) => ({
     id: res._id.toString(),
     author: {
-      id: (res.author as any)._id,  
+      id: (res.author as any)._id,
       name: (res.author as any)?.name,
       email: (res.author as any)?.email,
       role: (res.author as any)?.role,

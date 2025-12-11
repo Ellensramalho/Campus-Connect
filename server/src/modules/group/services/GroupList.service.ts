@@ -1,4 +1,4 @@
-import { TAuthor } from "../../../types/post/post.type.js";
+import { TAuthor } from "../../../@types/post/post.type.js";
 import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 import { GroupRepository } from "../group.repository.js";
@@ -20,23 +20,24 @@ export async function ListGroupByTeacherService(userId: string) {
   const groups = await GroupRepository.findByAuthor(teacher._id);
 
   const dataFormated = groups.map((group) => {
-    
-    const author = group.author as unknown as TAuthor
+    const author = group.author as unknown as TAuthor;
     const user = author.user;
 
     return {
       id: group._id,
       name: group.name,
       description: group.description,
-      author: user ? {
-        id: author._id,
-        name: author.user.name,
-        email: author.user.email,
-        role: author.user.role,
-        userId: author.user._id
-      } : null,
+      author: user
+        ? {
+            id: author._id,
+            name: author.user.name,
+            email: author.user.email,
+            role: author.user.role,
+            userId: author.user._id,
+          }
+        : null,
       members: group.members,
-      createdAt: group.createdAt
+      createdAt: group.createdAt,
     };
   });
 
@@ -47,21 +48,21 @@ export async function ListGroupByTeacherService(userId: string) {
 
 // Listar grupo de um participante
 export async function ListGroupByUserService(groupId: string, userId: string) {
-    const group = await GroupRepository.findById(groupId);
+  const group = await GroupRepository.findById(groupId);
 
-    if (!group) {
-        throw new Error("Grupo não encontrado.");
-    }
+  if (!group) {
+    throw new Error("Grupo não encontrado.");
+  }
 
-    const isMember = group.members?.some(member => member._id.toString() === userId);
+  const isMember = group.members?.some(
+    (member) => member._id.toString() === userId
+  );
 
-    if (!isMember) {
-        throw new Error("Usuário não é um membro.");
-    }
+  if (!isMember) {
+    throw new Error("Usuário não é um membro.");
+  }
 
-    return {
-        group
-    };
+  return {
+    group,
+  };
 }
-
-
