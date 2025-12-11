@@ -4,6 +4,7 @@ import {
   ProfileEditService,
   ProfileService,
   RegisterService,
+  SearchUsersService,
 } from "./user.service.js";
 import { CustomRequest } from "../../middlewares/AuthGuard.js";
 
@@ -53,5 +54,23 @@ export async function ProfileEditController(req: CustomRequest, res: Response) {
     res.status(200).json(result);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
+  }
+}
+
+// Buscar usuários
+export async function SearchUserController(req: CustomRequest, res: Response){
+  try{
+
+    const { q } = req.query
+
+    const result = await SearchUsersService(String(q || ''));
+
+    res.status(200).json(result);
+
+  }
+  catch(err: any){
+
+    res.status(500).json({ err: err.message });
+
   }
 }

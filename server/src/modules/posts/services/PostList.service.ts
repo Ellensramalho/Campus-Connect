@@ -4,6 +4,7 @@ import { TeacherRepository } from "../../teacher/teacher.repository.js";
 import { UserRepository } from "../../users/user.repository.js";
 import postModel from "../post.model.js";
 import { PostRepository } from "../post.repository.js";
+import { GroupRepository } from "../../group/group.repository.js";
 
 // Listar postagens
 export async function ListAllPostService(userId: string) {
@@ -32,6 +33,7 @@ export async function ListAllPostService(userId: string) {
             name: author.user.name,
             email: author.user.email,
             role: author.user.role,
+            userId: author.user._id,
           }
         : null,
       likes: post?.likes?.length,
@@ -52,6 +54,8 @@ export async function ListAuthorPostsService(authorId: string) {
     throw new Error("Usuário não encontrado.");
   }
 
+  const savedIds = user?.postsSaveds || [];
+
   const teacher = await TeacherRepository.findByUser(authorId);
   if (!teacher) {
     throw new Error("Professor não encontrado para este usuário.");
@@ -62,6 +66,13 @@ export async function ListAuthorPostsService(authorId: string) {
   const dataFormated = posts.map((post: TPost) => {
     const author = post.author as TAuthor;
     const user = author?.user;
+
+    const userObjectId = new Types.ObjectId(authorId);
+    const liked = post.likes?.some(id => id.equals(userObjectId));
+
+    const saved = savedIds.some(savedId =>
+    savedId.equals(post._id));
+
 
     return {
       id: post._id,
@@ -77,6 +88,8 @@ export async function ListAuthorPostsService(authorId: string) {
       content: post.content,
       tags: post.tags,
       likes: post.likes,
+      liked: liked,
+      saved: saved
     };
   });
 
@@ -91,7 +104,7 @@ export async function ListSavePostsService(userId: string) {
     throw new Error("Usuário não encontrado.");
   }
 
-  const savedIds = user.postsSaveds;
+  const savedIds = user.postsSaveds || [];
 
   const posts = await postModel
     .find({ _id: { $in: savedIds } })
@@ -106,6 +119,12 @@ export async function ListSavePostsService(userId: string) {
   const formatted = posts.map((post: any) => {
     const author = post.author;
     const user = author?.user;
+
+    const userObjectId = new Types.ObjectId(userId);
+    const liked = post.likes?.some((id: any) => id.equals(userObjectId));
+
+    const saved = savedIds.some(savedId =>
+    savedId.equals(post._id));
 
     return {
       id: post._id,
@@ -122,6 +141,8 @@ export async function ListSavePostsService(userId: string) {
       likes: post.likes?.length || 0,
       comments: post.comments?.length || 0,
       createdAt: post.createdAt,
+      liked: liked,
+      saved: saved
     };
   });
 
@@ -166,3 +187,5 @@ export async function ListPostByTeacherService(teacherId: string) {
     posts: dataFormated
   }
 }
+
+

@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema<TUser>({
         unique: true
     },
 
+    biography: {
+        type: String
+    },
+
     password: {
         type: String,
         required: true,

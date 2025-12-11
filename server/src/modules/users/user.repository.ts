@@ -25,6 +25,15 @@ export const UserRepository = {
         }).select("-password")
     },
 
+    search(query: string){
+        return userModel.find({
+            $or: [
+                { name: { $regex: query, $options: 'i' } },
+                { email: { $regex: query, $options: 'i' } }
+            ]
+        }).limit(10)
+    },
+
     create(data: TUser){
         return userModel.create(data);
     },

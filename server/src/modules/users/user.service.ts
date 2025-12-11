@@ -27,11 +27,12 @@ export async function RegisterService({
   const hashPass = await bcrypt.hash(password, salt);
 
   // Construindo dados
-  const data = {
+  const data: TUser = {
     name,
     nameUser,
     email,
     password: hashPass,
+    biography: ""
   };
 
   // Salvando no banco
@@ -96,4 +97,19 @@ export async function ProfileEditService(id: string, updates: DataUpdates) {
   const updatedUser = await UserRepository.update(id, updates);
 
   return updatedUser;
+}
+
+// Buscar usuários
+export async function SearchUsersService(query: string){
+
+  if(!query) return [];
+
+  const users = await UserRepository.search(query);
+
+  return users.map((u) => ({
+    id: u._id,
+    name: u.name,
+    email: u.email,
+    role: u.role
+  }))
 }
