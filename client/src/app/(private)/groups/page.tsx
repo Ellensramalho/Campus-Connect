@@ -21,7 +21,7 @@ export default function Groups() {
     try {
       const data = await LoadGroups(token);
       console.log(data);
-      setMyGroups(data.groups);
+      setMyGroups(data);
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export default function Groups() {
           <div className="grid grid-cols-1 w-100% sm:grid-cols-2 justify-items-center items-center md:grid-cols-2 gap-4">
             {
               myGroups?.map((group) => (
-                <Link key={group.id} className="w-full" href={`/groups/${group.id}`}>
+                <Link key={group._id} className="w-full" href={`/groups/${group._id}`}>
                   <div
                     className="p-4
                           flex flex-col items-center justify-center
@@ -64,8 +64,8 @@ export default function Groups() {
                     <span>
                       <GraduationCap />
                     </span>
-                    <h2 className="font-bold">{group.nome}</h2>
-                    <p>{group.Description}</p>
+                    <h2 className="font-bold">{group.name}</h2>
+                    <p>{group.description}</p>
                   </div>
                 </Link>
               ))

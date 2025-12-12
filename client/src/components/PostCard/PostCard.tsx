@@ -159,6 +159,7 @@ export const PostCard = ({
               <BiLike className="size-6 transition-all duration-200 transform hover:scale-110" />
             )}
           </Button>
+          {likeCounts || ""}
         </div>
         <Button variant={"ghost"} className="cursor-pointer">
           <Comments post_id={postId} />

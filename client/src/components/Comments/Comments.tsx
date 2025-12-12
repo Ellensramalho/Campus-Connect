@@ -123,7 +123,7 @@ export function Comments({ post_id }: ICommentsProps) {
             </div>
           ) : (
             <>
-              {comment?.length === 0 || comment === null && (
+              {comment?.length === 0 && (
                 <p className="text-sm text-muted-foreground">
                   Nenhum comentário ainda.
                 </p>
@@ -160,10 +160,11 @@ export function Comments({ post_id }: ICommentsProps) {
                     <div className="flex">
                       <Button
                         variant={"ghost"}
-                        className="cursor-pointer"
+                        className="cursor-pointer active:bg-gray-200 active:text-blue-600"
                         onClick={() => handleLike(c.id)}
+                        
                       >
-                        <BiLike className="size-6" />
+                        <BiLike className="size-6" /> {c.likes}
                       </Button>
                       <Button
                         variant={"ghost"}

@@ -3,7 +3,7 @@ import axiosInstace from "./axiosInstance";
 
 // Listagem de grupos criados pelo professor
 export const LoadGroups = async (token: string) => {
-  const res = await axiosInstace.get("api/group/teacher/", {
+  const res = await axiosInstace.get("api/group/user", {
     headers: {
       Authorization: `Bearer ${token}`,
     },

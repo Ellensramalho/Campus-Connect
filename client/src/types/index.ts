@@ -31,7 +31,7 @@ export interface IPost {
 export interface IComment {
   id: string;
   author: IUser;
-  Likes: number | null;
+  likes: number | null;
   content: string;
   createdAt: string;
 }
@@ -71,9 +71,9 @@ type Members = {
 };
 
 export interface IGroup {
-  id: string;
-  nome: string;
-  Description: string;
+  _id: string;
+  name: string;
+  description: string;
   teacher_id: number;
   teacher: Teacher;
   user: IUser;
