@@ -15,6 +15,10 @@ const UserSchema = new mongoose.Schema<TUser>({
     unique: true,
   },
 
+  avatarUrl: {
+    type: String
+  },
+
   email: {
     type: String,
     required: true,

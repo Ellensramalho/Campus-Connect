@@ -15,6 +15,7 @@ export async function ProfileUsersService(userId: string) {
     name_user: user.nameUser,
     role: user.role,
     email: user.email,
+    avatarUrl: user.avatarUrl,
     biography: user.biography,
     xp: user.xp
   };

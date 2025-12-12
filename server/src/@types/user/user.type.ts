@@ -11,5 +11,6 @@ export type TUser = {
   xp?: number;
   followers?: number;
   following?: number;
+  avatarUrl?: string; 
   role?: "admin" | "professor" | "estudante" | "user";
 };

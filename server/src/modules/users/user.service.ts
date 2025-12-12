@@ -81,6 +81,7 @@ export async function ProfileService(user: TUser) {
     email: user.email,
     biography: user.biography,
     xp: user.xp,
+    avatarUrl: user.avatarUrl,
     followers: followers.length,
     following: following.length,
   };
