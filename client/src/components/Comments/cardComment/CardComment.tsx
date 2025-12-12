@@ -3,13 +3,14 @@ import { IUser } from "@/types";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { FormResponse } from "../FormResponse/FormResponse";
 import { BiLike, BiSolidLike } from "react-icons/bi";
-import { User2Icon } from "lucide-react";
+import { User } from "lucide-react";
 import { convertDate } from "@/services/formateDate";
 import { useAuthContext } from "@/contexts/AuthContext";
 import dynamic from "next/dynamic";
 import { likeComment } from "@/api/posts";
 import { useState } from "react";
 import { Responses } from "../Responses/Responses";
+import Image from "next/image";
 
 const Markdown = dynamic(
   () => import("@uiw/react-md-editor").then((mod) => mod.default.Markdown),
@@ -54,7 +55,6 @@ export const CardComment = ({
   // Dar like nos comentários
   const handleLike = async (comment_id: string) => {
     if (like) {
-
       setLike(false);
 
       setLikeCounts((prev) => prev - 1);
@@ -62,9 +62,7 @@ export const CardComment = ({
       const data = await likeComment(user?.id, comment_id, token);
 
       console.log(data);
-
     } else {
-
       setLike(true);
 
       const data = await likeComment(user?.id, comment_id, token);
@@ -90,7 +88,21 @@ export const CardComment = ({
       <div className="p-3 rounded-lg bg-secondary">
         <span className="flex justify-between">
           <div className="flex py-3 items-center gap-2">
-            <User2Icon className="size-6 md:size-8" />
+            {user?.avatarUrl ? (
+              <div className="flex justify-center my-3.5 items-center h-20">
+                <Image
+                  className="rounded-full"
+                  src={user.avatarUrl}
+                  width={60}
+                  height={60}
+                  alt="perfil"
+                />
+              </div>
+            ) : (
+              <div className="flex justify-center items-center h-20">
+                <User className="size-15" />
+              </div>
+            )}
             <div className="text-sm flex flex-col font-semibold">
               <span>{author.name}</span>
               <span className="font-light">{convertDate(createdAt)}</span>

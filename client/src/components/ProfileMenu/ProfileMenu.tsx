@@ -15,6 +15,7 @@ import { User } from "lucide-react";
 import React, { useState } from "react";
 import { BiExit } from "react-icons/bi";
 import { Spinner } from "../ui/spinner";
+import Image from "next/image";
 
 type listItems = {
   item: string;
@@ -48,7 +49,7 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
           {!shrunk && <span className="text-xs mt-1">{iconProfile}</span>}
         </div>
       </SheetTrigger>
-      <SheetContent className="z-150">
+      <SheetContent className="z-150 overflow-y-auto py-2.5">
         <SheetHeader>
           <SheetTitle>Meu perfil</SheetTitle>
           <div className="flex flex-col mt-2 gap-1">
@@ -60,8 +61,8 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
             ) : (
               <>
                 {user?.avatarUrl ? (
-                  <div className="flex justify-center items-center h-20">
-                    <img src={user.avatarUrl} alt="foto de perfil" />
+                  <div className="flex justify-center my-3.5 items-center h-20">
+                    <Image className="rounded-full" src={user.avatarUrl} width={100} height={100} alt="perfil" />
                   </div>
                 ) : (
                   <div className="flex justify-center items-center h-20">

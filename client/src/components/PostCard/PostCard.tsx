@@ -9,13 +9,13 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { Comments } from "../Comments/Comments";
 import { convertDate } from "@/services/formateDate";
 import { FaRegBookmark } from "react-icons/fa";
-import { User2Icon } from "lucide-react";
+import { User, User2Icon } from "lucide-react";
 import { SavePosts } from "@/api/posts";
 import { toast } from "sonner";
 import { FaBookmark } from "react-icons/fa";
 
-
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const Markdown = dynamic(
   () => import("@uiw/react-md-editor").then((mod) => mod.default.Markdown),
@@ -48,7 +48,7 @@ export const PostCard = ({
   postId,
   likes_count,
   liked,
-  saved
+  saved,
 }: IPostCardProps) => {
   const [like, setLike] = useState(liked);
   const [save, setSave] = useState(saved);
@@ -61,13 +61,11 @@ export const PostCard = ({
   // Dar like
   const handleLike = async () => {
     if (like) {
-
       setLike(false);
 
       setLikeCounts((prev) => prev - 1);
 
       await likeInPost(postId, token);
-
     } else {
       setLike(true);
 
@@ -79,18 +77,14 @@ export const PostCard = ({
 
   // Salvar postagens
   const handleSavePost = async () => {
-
-    if(save) {
-
+    if (save) {
       setSave(false);
 
-      await SavePosts(postId, token)
+      await SavePosts(postId, token);
 
       await listSavedPosts(token);
-
-    } 
-    else {
-      setSave(true)
+    } else {
+      setSave(true);
       const data = await SavePosts(postId, token);
 
       await listSavedPosts(token);
@@ -99,8 +93,6 @@ export const PostCard = ({
 
       toast.success(`${data.msg}`);
     }
-
-    
   };
 
   // Formatando data
@@ -108,14 +100,28 @@ export const PostCard = ({
 
   useEffect(() => {
     setLike(liked);
-    setSave(saved)
+    setSave(saved);
   }, [liked, saved]);
 
   return (
     <div className="bg-white dark:bg-gray-800 mx-3 w-[90%] md:w-[80%] border rounded-xl shadow-sm p-2 space-y-4">
       <div className="flex justify-between items-center">
         <span className="font-bold text-[15px] flex items-center md:p-4 gap-6 justify-between md:gap-5 md:text-2xl">
-          <User2Icon className="size-8" />
+          {user?.avatarUrl && user.avatarUrl.trim().length > 0 ? (
+            <div className="flex justify-center my-3.5 items-center h-20">
+              <Image
+                className="rounded-full"
+                src={user?.avatarUrl}
+                width={60}
+                height={60}
+                alt="perfil"
+              />
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-20">
+              <User className="size-15" />
+            </div>
+          )}
           <div>
             {author?.name || "anonimo"}
             <div className="flex gap-3">
@@ -169,15 +175,11 @@ export const PostCard = ({
           className="cursor-pointer transition active:scale-90"
           onClick={() => handleSavePost()}
         >
-          {
-            save ? (
-              <FaBookmark className="size-5 text-blue-600 transition-all duration-200 transform scale-110 animate-save" />
-
-            ) : (
-              <FaRegBookmark className="size-5 transition-all duration-200 transform hover:scale-110" />
-            )
-          }
-          
+          {save ? (
+            <FaBookmark className="size-5 text-blue-600 transition-all duration-200 transform scale-110 animate-save" />
+          ) : (
+            <FaRegBookmark className="size-5 transition-all duration-200 transform hover:scale-110" />
+          )}
         </Button>
       </div>
       <hr />

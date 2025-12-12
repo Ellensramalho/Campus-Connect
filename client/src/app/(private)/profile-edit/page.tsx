@@ -17,6 +17,7 @@ export default function ProfileEdit() {
     user?.name_user
   );
   const [biography, setBiography] = useState<string | "">("");
+  const [avatar, setAvatar] = useState<string | "">("");
   const [newPass, setNewPass] = useState<string | "">("");
   const [repeatPass, setRepeatPass] = useState<string | "">("");
 
@@ -63,6 +64,15 @@ export default function ProfileEdit() {
                 placeholder="Fale sobre você..."
                 value={biography}
                 onChange={(e) => setBiography(e.target.value)}
+              />
+            </div>
+            <div className="py-2">
+              <label htmlFor="avatar">Avatar:</label>
+              <Input
+                placeholder="link da imagem"
+                id="avatar"
+                value={avatar}
+                onChange={(e) => setAvatar(e.target.value)}
               />
             </div>
             <hr className="my-2" />
