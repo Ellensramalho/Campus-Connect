@@ -5,7 +5,7 @@ O projeto é dividido em:
 
 - Frontend → [Next.js 16](https://nextjs.org/docs)
 
-- Backend → [Node.js)]([https://go.dev/](https://nodejs.org/en))
+- Backend → [Node.js)](https://nodejs.org/en)
 
 - Banco de Dados → [MongoDB (Mongo Atlas)]([https://neon.com/](https://www.mongodb.com/))
 
