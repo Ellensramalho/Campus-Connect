@@ -29,6 +29,7 @@ export interface IPost {
   createdAt: string;
   liked: boolean;
   saved: boolean;
+  tags: string[]
 }
 
 
@@ -99,6 +100,6 @@ export interface INotification {
   _id: string;
   message: string;
   type: string;
-  read: boolean;
+  readAt: boolean;
   createdAt: string;
 }

@@ -19,7 +19,7 @@ interface IAuthContextProps {
   logout: () => void;
   notification: INotification[];
   unreadCount: number; 
-  markNotificationAsRead: (id: string, notificationId: string) => Promise<void>;
+  markNotificationAsRead: (token: string, notificationId: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<IAuthContextProps | undefined>(
@@ -100,19 +100,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
 
-  const markNotificationAsRead = async (id: string) => {
+  const markNotificationAsRead = async (token: string, notificationId: string) => {
     try {
-      await markNotificationAsReadAPI(token, id);
+      await markNotificationAsReadAPI(token, notificationId);
 
       setNotification((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+        prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
       );
+      toast.success("Notificação marcada como lida.")
     } catch (err) {
       console.log(err);
     }
   };
 
-  const unreadCount = notification.filter((n) => !n.read).length;
+  const unreadCount = notification.filter((n) => !n.readAt).length;
 
   // Logout
   const logout = () => {

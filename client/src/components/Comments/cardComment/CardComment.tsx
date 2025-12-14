@@ -90,11 +90,11 @@ export const CardComment = ({
       <div className="p-3 rounded-lg bg-secondary">
         <span className="flex justify-between">
           <div className="flex py-3 items-center gap-2">
-            {author.id === user?.id ? (
+            {author?.avatarUrl && author.avatarUrl.trim().length > 0  ? (
               <div className="flex justify-center my-3.5 items-center h-20">
                 <Image
                   className="rounded-full"
-                  src={user!.avatarUrl}
+                  src={author.avatarUrl}
                   width={60}
                   height={60}
                   alt="perfil"

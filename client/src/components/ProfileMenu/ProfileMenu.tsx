@@ -45,8 +45,19 @@ export function ProfileMenu({ items, iconProfile, shrunk }: IProfileMenuProps) {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <div className="cursor-pointer w-[100px] flex flex-col items-center justify-center">
-          <User className="hidden md:flex" />
-          {!shrunk && <span className="text-xs mt-1">{iconProfile}</span>}
+          {
+            user?.avatarUrl ? (
+              <Image 
+              className="rounded-full"
+                src={user.avatarUrl} 
+                width={40}
+                height={40}
+                alt="Perfil"
+              />
+            ) : (
+              <User />
+            )
+          }
         </div>
       </SheetTrigger>
       <SheetContent className="z-150 overflow-y-auto py-2.5">

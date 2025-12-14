@@ -10,6 +10,7 @@ import {
   Edit,
   Settings,
   BellIcon,
+  Search,
 } from "lucide-react";
 import { MdUpload } from "react-icons/md";
 
@@ -17,6 +18,7 @@ import { useEffect, useState } from "react";
 import { AiOutlinePartition } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { FaRegBookmark } from "react-icons/fa";
+import { SearchPerson } from "../Search/Search";
 
 export const NavbarClient = () => {
   const router = useRouter();
@@ -42,6 +44,11 @@ export const NavbarClient = () => {
       item: "Editar Perfil",
       icon: <Edit />,
       onClick: () => router.push("/profile-edit"),
+    },
+    {
+      item: "Notificações",
+      icon: <BellIcon />,
+      onClick: () => router.push("/notifications"),
     },
     {
       item: "Configurações",
@@ -158,6 +165,14 @@ export const NavbarClient = () => {
               <Compass />
               {!shrunk && <span className="text-xs mt-1">Explorar</span>}
             </Link>
+          </li>
+          <li>
+            <div
+              className="flex w-[100px] px-2 py-2 hover:text-white hover:bg-blue-600 hover:transition hover:rounded-2xl flex-col cursor-pointer items-center justify-center"
+              
+            >
+              <SearchPerson />
+            </div>
           </li>
           <li>
             <Link

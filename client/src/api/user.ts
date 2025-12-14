@@ -59,3 +59,28 @@ export const BecomeStudent = async (token: string, course: string, matricula: st
 
   return res.data;
 }
+
+// Buscar usuaŕios
+export const SearchUsers = async (token: string, q: string) => {
+  const res = await axiosInstace.get(`/api/search/user?q=${q}`,{
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  return res.data
+}
+
+// Seguir usuário
+export const FollowUser = async (token: string, userToFollowId: string | undefined) => {
+  const res = await axiosInstace.post(`/api/follow/user/${userToFollowId}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  )
+
+    return res.data;
+}
