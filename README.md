@@ -5,9 +5,9 @@ O projeto é dividido em:
 
 - Frontend → [Next.js 16](https://nextjs.org/docs)
 
-- Backend → [Go (Gin Framework)](https://go.dev/)
+- Backend → [Node.js)](https://nodejs.org/en)
 
-- Banco de Dados → [PostgreSQL (Neon)](https://neon.com/)
+- Banco de Dados → [MongoDB (Mongo Atlas)]([https://neon.com/](https://www.mongodb.com/))
 
 ### Deploy
 
@@ -53,13 +53,13 @@ Usuários podem:
 
 ### Backend
 
-- Go (Golang)
+- Node.js
 
-- Gin
+- Express
 
-- GORM
+- Mongoose
 
-- PostgreSQL (Neon)
+- MongoDB
 
 - JWT Authentication
 
@@ -71,7 +71,7 @@ Usuários podem:
 
 - Vercel (frontend)
 
-- Neon Database
+- Mongo Atlas (Hospedagem do banco de dados)
 
 ## 🚀 Funcionalidades
 
