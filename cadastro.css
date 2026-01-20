@@ -1,0 +1,82 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background-color: #0F172A ;
+  color: #fff;
+}
+.cadastro-form{
+  width: 400px;
+  margin: 150px auto;
+  padding: 30px;
+  background-color: #1E293B ;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.cadastro-form h2{
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: "Playfair", monospace;
+  font-size: 30px;
+  margin-top: 10px;
+}
+
+label{
+  font-size: 16px;
+}
+
+.dados{
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.senha-container{
+  position: relative;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.senha-container input {
+  width: 100%;
+  padding: 10px;
+}
+
+#toggleSenha {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn {
+  margin-top: 25px;
+  background-color: #8b5cf6;
+  color: white;
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.btn:hover {
+  background-color: #7c3aed;
+
+}
+
+input{
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.termos{
+  margin-top: 15px;
+}
+
